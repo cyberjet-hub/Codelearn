@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --background: #050816;
+  --foreground: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(34, 211, 238, 0.15), transparent 28rem),
+    radial-gradient(circle at 85% 15%, rgba(139, 92, 246, 0.16), transparent 30rem),
+    #050816;
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+a,
+input,
+textarea,
+select,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+
+.hero-card-3d {
+  transform-style: preserve-3d;
+  animation: hero-tilt 9s ease-in-out infinite;
+}
+
+.floating {
+  animation: float 5s ease-in-out infinite;
+}
+
+.floating-delayed {
+  animation: float 5s ease-in-out 1.2s infinite;
+}
+
+.reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.code-cube {
+  transform-style: preserve-3d;
+  animation: cube-drift 8s ease-in-out infinite;
+}
+
+.code-cube:nth-child(2) {
+  animation-delay: -1.5s;
+}
+
+.code-cube:nth-child(3) {
+  animation-delay: -3s;
+}
+
+.ambient-orbit {
+  animation: orbit 18s linear infinite;
+}
+
+@keyframes hero-tilt {
+  0%,
+  100% {
+    transform: perspective(1100px) rotateX(0deg) rotateY(-3deg) translateY(0);
+  }
+  50% {
+    transform: perspective(1100px) rotateX(2deg) rotateY(4deg) translateY(-12px);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(1.5deg);
+  }
+}
+
+@keyframes cube-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotateX(12deg) rotateY(-18deg);
+  }
+  50% {
+    transform: translate3d(0, -18px, 24px) rotateX(20deg) rotateY(22deg);
+  }
+}
+
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(34px) scale(0.98);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    animation: reveal-up both;
+    animation-timeline: view();
+    animation-range: entry 8% cover 28%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
