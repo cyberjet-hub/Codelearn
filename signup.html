@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up — CodeLearn</title>
+  <link rel="icon" type="image/png" href="main ico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --blue: #2563eb;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      padding: 5rem 1rem 3rem;
+    }
+
+    /* ── BACKGROUND ── */
+    .bg-grid {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(37,99,235,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,0.06) 1px, transparent 1px);
+      background-size: 56px 56px;
+      pointer-events: none;
+    }
+    .bg-glow-left {
+      position: fixed;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(34,197,94,0.07) 0%, transparent 70%);
+      top: 50%; left: -100px; transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .bg-glow-right {
+      position: fixed;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(6,182,212,0.07) 0%, transparent 70%);
+      top: 20%; right: -50px;
+      pointer-events: none;
+    }
+
+    /* ── PARTICLES ── */
+    .particles { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+    .particle {
+      position: absolute; width: 2px; height: 2px;
+      background: var(--green); border-radius: 50%; opacity: 0;
+      animation: drift linear infinite;
+    }
+    @keyframes drift {
+      0%   { opacity: 0; transform: translateY(100vh) scale(0); }
+      10%  { opacity: .6; }
+      90%  { opacity: .3; }
+      100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+    }
+
+    /* ── MAIN CARD ── */
+    .signup-card {
+      position: relative; z-index: 10;
+      width: 100%; max-width: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.75rem 2.5rem;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(34,197,94,0.05);
+      animation: slideUp .5s ease both;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── HEADER ── */
+    .card-logo { text-align: center; margin-bottom: 1.75rem; }
+    .logo-mark {
+      display: inline-flex;
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      border-radius: 14px;
+      align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: .75rem;
+      box-shadow: 0 8px 24px rgba(6,182,212,0.25);
+    }
+    .logo-name { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--cyan); }
+    .logo-name span { color: var(--green); }
+
+    .card-title { font-family: 'Syne', sans-serif; font-size: 1.75rem; font-weight: 800; text-align: center; margin-bottom: .35rem; }
+    .card-sub { text-align: center; color: var(--muted); font-size: .88rem; margin-bottom: 2rem; }
+    .card-sub a { color: var(--cyan); text-decoration: none; font-weight: 500; }
+    .card-sub a:hover { text-decoration: underline; }
+
+    /* ── TABS ── */
+    .tabs {
+      display: grid; grid-template-columns: 1fr 1fr;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 4px;
+      margin-bottom: 1.75rem; gap: 4px;
+    }
+    .tab {
+      padding: .6rem; border-radius: 7px; border: none;
+      background: transparent; color: var(--muted);
+      font-family: 'Inter', sans-serif; font-size: .87rem; font-weight: 500;
+      cursor: pointer; transition: all .2s;
+      display: flex; align-items: center; justify-content: center; gap: .4rem;
+    }
+    .tab.active {
+      background: var(--surface); color: var(--cyan);
+      border: 1px solid rgba(6,182,212,0.25);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    /* ── STEP INDICATOR ── */
+    .steps {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0; margin-bottom: 1.75rem;
+    }
+    .step-item {
+      display: flex; flex-direction: column; align-items: center; gap: .35rem;
+    }
+    .step-circle {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem; font-weight: 700;
+      font-family: 'Space Mono', monospace;
+      color: var(--muted); transition: all .3s;
+    }
+    .step-circle.active { border-color: var(--cyan); color: var(--cyan); background: rgba(6,182,212,0.1); }
+    .step-circle.done { border-color: var(--green); background: var(--green); color: #000; }
+    .step-label { font-size: .65rem; color: var(--muted); font-family: 'Space Mono', monospace; letter-spacing: .5px; white-space: nowrap; }
+    .step-label.active { color: var(--cyan); }
+    .step-label.done { color: var(--green); }
+    .step-line { width: 48px; height: 2px; background: var(--border); margin: 0 .25rem; margin-bottom: 1.3rem; transition: background .3s; flex-shrink: 0; }
+    .step-line.done { background: var(--green); }
+
+    /* ── FIELDS ── */
+    .field { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1.1rem; }
+    .field label {
+      font-size: .78rem; font-weight: 600;
+      color: var(--muted); letter-spacing: .4px;
+      text-transform: uppercase; font-family: 'Space Mono', monospace;
+    }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; }
+
+    .input-wrap { position: relative; }
+    .input-icon {
+      position: absolute; left: .9rem; top: 50%; transform: translateY(-50%);
+      font-size: .95rem; pointer-events: none; color: var(--muted);
+    }
+    .toggle-pw {
+      position: absolute; right: .9rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: .85rem; padding: 0; transition: color .2s;
+    }
+    .toggle-pw:hover { color: var(--cyan); }
+
+    /* Strength indicator inside password field */
+    .pw-strength-bar {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px; border-radius: 0 0 9px 9px; overflow: hidden;
+    }
+    .pw-strength-fill {
+      height: 100%; width: 0;
+      transition: width .3s, background .3s;
+      border-radius: 0 0 9px 9px;
+    }
+
+    input, select {
+      width: 100%;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      padding: .78rem .9rem .78rem 2.55rem;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: .92rem;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+      appearance: none;
+    }
+    input::placeholder { color: var(--muted); }
+    input:focus, select:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(6,182,212,0.1);
+    }
+    input.error, select.error {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+    }
+    input.valid {
+      border-color: var(--green);
+    }
+    select { cursor: pointer; }
+    select option { background: var(--card); }
+
+    /* select without left icon padding */
+    select.no-icon { padding-left: .9rem; }
+
+    /* ── PASSWORD STRENGTH ── */
+    .strength-hints {
+      display: none; flex-direction: column; gap: .3rem;
+      margin-top: .5rem;
+    }
+    .strength-hints.show { display: flex; }
+    .hint-row {
+      display: flex; align-items: center; gap: .45rem;
+      font-size: .75rem; color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      transition: color .2s;
+    }
+    .hint-row.pass { color: var(--green); }
+    .hint-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background .2s; }
+    .hint-row.pass .hint-dot { background: var(--green); }
+
+    /* ── TERMS CHECKBOX ── */
+    .terms-row {
+      display: flex; align-items: flex-start; gap: .65rem;
+      margin-bottom: 1.5rem; margin-top: .25rem;
+    }
+    .terms-row input[type="checkbox"] {
+      width: 16px; height: 16px; min-width: 16px; padding: 0;
+      border-radius: 4px; cursor: pointer; margin-top: 2px;
+    }
+    .terms-row label {
+      font-size: .83rem; color: var(--muted); cursor: pointer;
+      text-transform: none; letter-spacing: 0;
+      font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.5;
+    }
+    .terms-row a { color: var(--cyan); text-decoration: none; font-weight: 500; }
+    .terms-row a:hover { text-decoration: underline; }
+
+    /* ── ERROR BANNER ── */
+    .error-banner {
+      display: none;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 8px; padding: .75rem 1rem;
+      font-size: .84rem; color: #fca5a5;
+      margin-bottom: 1.2rem;
+      align-items: center; gap: .6rem;
+    }
+    .error-banner.show { display: flex; }
+
+    /* ── PROGRESS STEPS BUTTONS ── */
+    .btn-row { display: flex; gap: .75rem; }
+
+    .signup-btn {
+      flex: 1; padding: .95rem;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      border: none; border-radius: 10px;
+      color: #fff; font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: all .2s;
+      letter-spacing: .3px; position: relative; overflow: hidden;
+    }
+    .signup-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(6,182,212,0.28); }
+    .signup-btn:active { transform: translateY(0); }
+    .signup-btn.loading { pointer-events: none; opacity: .8; }
+    .signup-btn .btn-text { transition: opacity .2s; }
+    .signup-btn .spinner {
+      display: none; position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 20px; height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin .6s linear infinite;
+    }
+    .signup-btn.loading .btn-text { opacity: 0; }
+    .signup-btn.loading .spinner { display: block; }
+    @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+    .back-btn {
+      padding: .95rem 1.5rem;
+      background: transparent; border: 1.5px solid var(--border);
+      border-radius: 10px; color: var(--muted);
+      font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: all .2s;
+    }
+    .back-btn:hover { border-color: var(--muted); color: var(--text); }
+
+    /* ── DIVIDER ── */
+    .or-divider { display: flex; align-items: center; gap: 1rem; margin: 1.25rem 0; }
+    .or-line { flex: 1; height: 1px; background: var(--border); }
+    .or-text { color: var(--muted); font-size: .78rem; font-family: 'Space Mono', monospace; }
+
+    /* ── GOOGLE ── */
+    .google-btn {
+      width: 100%; padding: .85rem;
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-family: 'Inter', sans-serif; font-size: .9rem; font-weight: 500;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: .65rem;
+      transition: all .2s;
+    }
+    .google-btn:hover { border-color: rgba(6,182,212,0.4); transform: translateY(-1px); }
+
+    /* ── SUCCESS ── */
+    .success-view { display: none; flex-direction: column; align-items: center; text-align: center; padding: 1rem 0; }
+    .success-view.show { display: flex; }
+    .signup-form.hidden { display: none; }
+
+    .success-ring {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: rgba(34,197,94,0.08);
+      border: 2px solid var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; margin-bottom: 1.25rem;
+      animation: popIn .4s ease both;
+    }
+    @keyframes popIn { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .success-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--green); margin-bottom: .5rem; }
+    .success-sub { color: var(--muted); font-size: .88rem; line-height: 1.6; max-width: 300px; }
+    .success-name { color: var(--cyan); font-weight: 600; }
+
+    .confetti-row { display: flex; gap: .5rem; margin: 1rem 0; font-size: 1.2rem; }
+
+    .dashboard-btn {
+      margin-top: 1.5rem; padding: .75rem 2rem;
+      background: var(--green); border: none; border-radius: 9px;
+      color: #000; font-family: 'Syne', sans-serif;
+      font-size: .95rem; font-weight: 700;
+      cursor: pointer; transition: all .2s;
+    }
+    .dashboard-btn:hover { background: #16a34a; transform: translateY(-2px); }
+
+    /* ── BACK LINK ── */
+    .back-link {
+      position: fixed; top: 1.5rem; left: 1.5rem; z-index: 20;
+      display: flex; align-items: center; gap: .5rem;
+      color: var(--muted); font-size: .85rem;
+      text-decoration: none; font-family: 'Space Mono', monospace;
+      transition: color .2s;
+    }
+    .back-link:hover { color: var(--cyan); }
+
+    /* ── SCHOOL FIELD (Teacher only) ── */
+    .teacher-fields { display: none; }
+    .teacher-fields.show { display: block; }
+
+    @media (max-width: 520px) {
+      .signup-card { margin: 1rem; padding: 2rem 1.5rem; border-radius: 16px; }
+      .field-row { grid-template-columns: 1fr; }
+      .step-line { width: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow-left"></div>
+<div class="bg-glow-right"></div>
+<div class="particles" id="particles"></div>
+
+<a href="home2.html" class="back-link">← Home</a>
+
+<!-- SIGNUP CARD -->
+<div class="signup-card">
+
+  <div class="card-logo">
+    <img src="main ico.png" alt="CodeLearn Logo" style="height: 60px; vertical-align: middle; margin-right: 40px;">
+    <div class="logo-name"><span></span></div>
+  </div>
+
+  <h1 class="card-title">Create account</h1>
+  <p class="card-sub">Already have an account? <a href="login.html">Log in</a></p>
+
+  <!-- Role tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this, 'student')" type="button">🎓 Student</button>
+    <button class="tab"        onclick="switchTab(this, 'teacher')" type="button">📖 Teacher</button>
+  </div>
+
+  <!-- Step indicator -->
+  <div class="steps" id="stepIndicator">
+    <div class="step-item">
+      <div class="step-circle active" id="s1">1</div>
+      <div class="step-label active" id="sl1">Account</div>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-item">
+      <div class="step-circle" id="s2">2</div>
+      <div class="step-label" id="sl2">Profile</div>
+    </div>
+    <div class="step-line" id="line2"></div>
+    <div class="step-item">
+      <div class="step-circle" id="s3">3</div>
+      <div class="step-label" id="sl3">Confirm</div>
+    </div>
+  </div>
+
+  <!-- ══ FORM ══ -->
+  <div class="signup-form" id="signupForm">
+
+    <div class="error-banner" id="errorBanner">
+      ⚠️ <span id="errorMsg">Please fill in all required fields.</span>
+    </div>
+
+    <!-- ── STEP 1: Account ── -->
+    <div id="step1">
+      <div class="field-row">
+        <div class="field">
+          <label>First Name</label>
+          <div class="input-wrap">
+            <span class="input-icon"></span>
+            <input type="text" id="firstName" placeholder="" autocomplete="given-name"/>
+          </div>
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <div class="input-wrap">
+            <span class="input-icon"></span>
+            <input type="text" id="lastName" placeholder="" autocomplete="family-name"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Email Address</label>
+        <div class="input-wrap">
+          <span class="input-icon"></span>
+          <input type="email" id="email" placeholder="" autocomplete="email" oninput="validateEmail(this)"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <div class="input-wrap">
+          <span class="input-icon"></span>
+          <input type="password" id="password" placeholder="Min. 8 characters" oninput="checkStrength(this)"/>
+          <button class="toggle-pw" type="button" onclick="togglePw('password','togglePw1')" id="togglePw1">👁</button>
+          <div class="pw-strength-bar"><div class="pw-strength-fill" id="strengthFill"></div></div>
+        </div>
+        <div class="strength-hints" id="strengthHints">
+          <div class="hint-row" id="h-len"><div class="hint-dot"></div>At least 8 characters</div>
+          <div class="hint-row" id="h-num"><div class="hint-dot"></div>Contains a number</div>
+          <div class="hint-row" id="h-sym"><div class="hint-dot"></div>Contains a symbol (!@#...)</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Confirm Password</label>
+        <div class="input-wrap">
+          <span class="input-icon"></span>
+          <input type="password" id="confirmPassword" placeholder="Re-enter password" oninput="checkMatch(this)"/>
+          <button class="toggle-pw" type="button" onclick="togglePw('confirmPassword','togglePw2')" id="togglePw2">👁</button>
+        </div>
+      </div>
+
+      <button class="signup-btn" type="button" onclick="goStep2()">
+        <span class="btn-text">Continue →</span>
+        <div class="spinner"></div>
+      </button>
+
+      <div class="or-divider"><div class="or-line"></div><div class="or-text">or</div><div class="or-line"></div></div>
+
+      <button class="google-btn" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Sign up with Google
+      </button>
+    </div>
+
+    <!-- ── STEP 2: Profile ── -->
+    <div id="step2" style="display:none;">
+
+      <!-- Student fields -->
+      <div id="studentFields">
+        <div class="field">
+          <label>School Name</label>
+          <div class="input-wrap">
+            <span class="input-icon"></span>
+            <input type="text" id="schoolName" placeholder="e.g. Namilyango College"/>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Class / Year</label>
+            <div class="input-wrap">
+              <span class="input-icon"></span>
+              <input type="text" id="classYear" placeholder=""/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Age</label>
+            <div class="input-wrap">
+              <span class="input-icon"></span>
+              <input type="number" id="age" placeholder=""/>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Learning Goal</label>
+          <div class="input-wrap">
+            <select id="learningGoal" class="no-icon" style="padding-left:.9rem">
+              <option value="" disabled selected>Select your main goal…</option>
+              <option>🐍 Learn Python programming</option>
+              <option>🌐 Build websites (HTML & CSS)</option>
+              <option>📊 Understand databases & SQL</option>
+              <option>⚡ Study hardware & logic gates</option>
+              <option>🎓 Pass my ICT exams</option>
+              <option>💡 General computer science</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teacher fields -->
+      <div id="teacherFields" style="display:none;">
+        <div class="field">
+          <label>School / Institution</label>
+          <div class="input-wrap">
+            <span class="input-icon"></span>
+            <input type="text" id="teacherSchool" placeholder="e.g. Kampala Parents School"/>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Subject</label>
+            <div class="input-wrap">
+              <span class="input-icon"></span>
+              <input type="text" id="teacherSubject" placeholder=""/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Experience</label>
+            <div class="input-wrap">
+              <select id="teacherExp" class="no-icon" style="padding-left:.9rem">
+                <option value="" disabled selected>Years…</option>
+                <option>0–1 years</option>
+                <option>2–5 years</option>
+                <option>6–10 years</option>
+                <option>10+ years</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Number of Students</label>
+          <div class="input-wrap">
+            <span class="input-icon"></span>
+            <input type="number" id="numStudents" placeholder=""/>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="back-btn" type="button" onclick="goStep(1)">← Back</button>
+        <button class="signup-btn" type="button" onclick="goStep3()">
+          <span class="btn-text">Continue →</span>
+          <div class="spinner"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Confirm ── -->
+    <div id="step3" style="display:none;">
+
+      <!-- Summary card -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem;">
+        <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--cyan);letter-spacing:.8px;text-transform:uppercase;margin-bottom:.85rem;">Account Summary</div>
+        <div style="display:flex;flex-direction:column;gap:.6rem;">
+          <div style="display:flex;justify-content:space-between;font-size:.85rem;">
+            <span style="color:var(--muted)">Name</span>
+            <span id="summaryName" style="color:var(--text);font-weight:500;"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:.85rem;">
+            <span style="color:var(--muted)">Email</span>
+            <span id="summaryEmail" style="color:var(--text);font-weight:500;"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:.85rem;">
+            <span style="color:var(--muted)">Role</span>
+            <span id="summaryRole" style="color:var(--cyan);font-weight:600;font-family:'Space Mono',monospace;font-size:.78rem;"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:.85rem;">
+            <span style="color:var(--muted)">School</span>
+            <span id="summarySchool" style="color:var(--text);font-weight:500;"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="terms-row">
+        <input type="checkbox" id="agreeTerms"/>
+        <label for="agreeTerms">
+          I agree to CodeLearn's <a href="termsofservice.html" target="_blank">Terms & Conditions</a> and <a href="pp.html" target="_blank">Privacy Policy</a>. I confirm I am at least 13 years old.
+        </label>
+      </div>
+
+      <div class="btn-row">
+        <button class="back-btn" type="button" onclick="goStep(2)">← Back</button>
+        <button class="signup-btn" type="button" id="finalBtn" onclick="handleSignup()">
+          <span class="btn-text">Create Account </span>
+          <div class="spinner"></div>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /signup-form -->
+
+  <!-- SUCCESS -->
+  <div class="success-view" id="successView">
+    <div class="success-ring">🚀</div>
+    <div class="confetti-row">🎉 🎊 ✨ 🎉</div>
+    <div class="success-title">Welcome to CodeLearn!</div>
+    <p class="success-sub">Your account is ready, <span class="success-name" id="successName"></span>. Time to start your coding journey.</p>
+    <button class="dashboard-btn" type="button" onclick="window.location.href='dashboard.html'">Go to Dashboard →</button>
+  </div>
+
+</div><!-- /signup-card -->
+
+<script>
+  // ── PARTICLES ──────────────────────────────────────────────────────────────
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      width: ${Math.random() > .5 ? 2 : 3}px;
+      height: ${Math.random() > .5 ? 2 : 3}px;
+      animation-duration: ${6 + Math.random() * 10}s;
+      animation-delay: ${Math.random() * 8}s;
+    `;
+    container.appendChild(p);
+  }
+
+  // ── STATE ──────────────────────────────────────────────────────────────────
+  let currentStep = 1;
+  let activeRole = 'student';
+
+  // ── TAB SWITCH ─────────────────────────────────────────────────────────────
+  function switchTab(btn, role) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    activeRole = role;
+    document.getElementById('studentFields').style.display = role === 'student' ? 'block' : 'none';
+    document.getElementById('teacherFields').style.display = role === 'teacher' ? 'block' : 'none';
+  }
+
+  // ── STEP NAVIGATION ────────────────────────────────────────────────────────
+  function goStep(n) {
+    document.getElementById(`step${currentStep}`).style.display = 'none';
+    currentStep = n;
+    document.getElementById(`step${n}`).style.display = 'block';
+    updateStepUI();
+    hideError();
+  }
+
+  function updateStepUI() {
+    [1, 2, 3].forEach(i => {
+      const circle = document.getElementById(`s${i}`);
+      const label  = document.getElementById(`sl${i}`);
+      circle.classList.remove('active', 'done');
+      label.classList.remove('active', 'done');
+      if (i < currentStep) { circle.classList.add('done'); circle.textContent = '✓'; label.classList.add('done'); }
+      else if (i === currentStep) { circle.classList.add('active'); circle.textContent = i; label.classList.add('active'); }
+      else { circle.textContent = i; }
+    });
+    [1, 2].forEach(i => {
+      document.getElementById(`line${i}`).classList.toggle('done', i < currentStep);
+    });
+  }
+
+  // ── STEP 1 → 2 ────────────────────────────────────────────────────────────
+  function goStep2() {
+    const first = document.getElementById('firstName').value.trim();
+    const last  = document.getElementById('lastName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const pw    = document.getElementById('password').value;
+    const cpw   = document.getElementById('confirmPassword').value;
+
+    if (!first || !last) return showError('Please enter your first and last name.');
+    if (!email || !email.includes('@')) return showError('Please enter a valid email address.');
+    if (pw.length < 8) return showError('Your password must be at least 8 characters.');
+    if (pw !== cpw) return showError('Passwords do not match. Please try again.');
+
+    goStep(2);
+  }
+
+  // ── STEP 2 → 3 ────────────────────────────────────────────────────────────
+  function goStep3() {
+    const school = activeRole === 'student'
+      ? document.getElementById('schoolName').value.trim()
+      : document.getElementById('teacherSchool').value.trim();
+
+    if (!school) return showError('Please enter your school name.');
+
+    // Fill summary
+    document.getElementById('summaryName').textContent =
+      `${document.getElementById('firstName').value} ${document.getElementById('lastName').value}`;
+    document.getElementById('summaryEmail').textContent = document.getElementById('email').value;
+    document.getElementById('summaryRole').textContent  = activeRole === 'student' ? '🎓 STUDENT' : '📖 TEACHER';
+    document.getElementById('summarySchool').textContent = school;
+
+    goStep(3);
+  }
+
+  // ── FINAL SUBMIT ───────────────────────────────────────────────────────────
+  function handleSignup() {
+    if (!document.getElementById('agreeTerms').checked)
+      return showError('Please agree to the Terms & Conditions to continue.');
+
+    const btn = document.getElementById('finalBtn');
+    btn.classList.add('loading');
+
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      const name = document.getElementById('firstName').value;
+      document.getElementById('successName').textContent = name;
+      document.getElementById('signupForm').classList.add('hidden');
+      document.getElementById('successView').classList.add('show');
+      document.getElementById('stepIndicator').style.display = 'none';
+    }, 1800);
+  }
+
+  // ── VALIDATION HELPERS ─────────────────────────────────────────────────────
+  function validateEmail(input) {
+    const valid = input.value.includes('@') && input.value.includes('.');
+    input.classList.toggle('valid', valid && input.value.length > 0);
+    input.classList.remove('error');
+  }
+
+  function checkStrength(input) {
+    const v = input.value;
+    const hints = document.getElementById('strengthHints');
+    hints.classList.toggle('show', v.length > 0);
+
+    const hasLen = v.length >= 8;
+    const hasNum = /\d/.test(v);
+    const hasSym = /[!@#$%^&*(),.?":{}|<>]/.test(v);
+
+    toggle('h-len', hasLen);
+    toggle('h-num', hasNum);
+    toggle('h-sym', hasSym);
+
+    const score = [hasLen, hasNum, hasSym].filter(Boolean).length;
+    const fill  = document.getElementById('strengthFill');
+    const colors = ['', '#ef4444', '#f59e0b', '#22c55e'];
+    fill.style.width = score ? (score / 3 * 100) + '%' : '0';
+    fill.style.background = colors[score] || '';
+  }
+
+  function checkMatch(input) {
+    const match = input.value === document.getElementById('password').value;
+    input.classList.toggle('valid', match && input.value.length > 0);
+    input.classList.toggle('error', !match && input.value.length > 0);
+  }
+
+  function toggle(id, pass) {
+    document.getElementById(id).classList.toggle('pass', pass);
+  }
+
+  function togglePw(inputId, btnId) {
+    const input = document.getElementById(inputId);
+    const btn   = document.getElementById(btnId);
+    input.type  = input.type === 'password' ? 'text' : 'password';
+    btn.textContent = input.type === 'password' ? '👁' : '🙈';
+  }
+
+  // ── ERROR BANNER ───────────────────────────────────────────────────────────
+  function showError(msg) {
+    const banner = document.getElementById('errorBanner');
+    document.getElementById('errorMsg').textContent = msg;
+    banner.classList.add('show');
+    banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function hideError() {
+    document.getElementById('errorBanner').classList.remove('show');
+  }
+</script>
+</body>
+</html>

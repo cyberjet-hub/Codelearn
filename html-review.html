@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HTML Review — CodeLearn</title>
+  <link rel="icon" type="image/png" href="main ico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --cyan: #06b6d4;
+      --orange: #f97316;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
+
+    /* HEADER */
+    .review-header { border-bottom: 1px solid var(--border); padding-bottom: 2rem; margin-bottom: 3rem; }
+    .tag { font-family: 'Space Mono'; color: var(--orange); font-size: 0.75rem; letter-spacing: 2px; }
+    h1 { font-family: 'Syne'; font-size: 2.5rem; margin-top: 0.5rem; }
+
+    /* REVIEW SECTION */
+    .section { margin-bottom: 3rem; }
+    h2 { font-family: 'Syne'; font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--cyan); display: flex; align-items: center; gap: 10px; }
+    
+    .concept-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* CODE BLOCKS */
+    code { font-family: 'Space Mono'; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; color: var(--cyan); }
+    .code-display {
+      background: #000;
+      padding: 1.5rem;
+      border-radius: 8px;
+      font-family: 'Space Mono';
+      font-size: 0.9rem;
+      color: #fff;
+      margin: 1rem 0;
+      border: 1px solid var(--border);
+      white-space: pre;
+    }
+
+    .key-points { list-style: none; }
+    .key-points li { margin-bottom: 0.8rem; display: flex; gap: 10px; font-size: 0.95rem; color: var(--muted); }
+    .key-points li::before { content: '→'; color: var(--cyan); font-weight: bold; }
+
+    /* ACTION BUTTONS */
+    .btn-group { display: flex; gap: 1rem; margin-top: 4rem; }
+    .btn {
+      flex: 1; padding: 1.2rem; border-radius: 8px; text-decoration: none;
+      font-family: 'Syne'; font-weight: 800; text-align: center; transition: 0.2s;
+    }
+    .btn-quiz { background: var(--cyan); color: #000; }
+    .btn-quiz:hover { background: #22d3ee; transform: translateY(-3px); }
+    .btn-back { border: 1px solid var(--border); color: var(--text); }
+    .btn-back:hover { background: rgba(255,255,255,0.05); }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header class="review-header">
+      <div class="tag">MODULE 2 // REVIEW MODE</div>
+      <h1>HTML Essentials</h1>
+      <p style="color: var(--muted);">A quick summary of web structure before your final assessment.</p>
+    </header>
+
+    <div class="section">
+      <h2>01. Element Anatomy</h2>
+      <div class="concept-card">
+        <p>HTML elements are the building blocks of pages. Most consist of an <strong>opening tag</strong>, <strong>content</strong>, and a <strong>closing tag</strong>.</p>
+        <div class="code-display">&lt;p&gt;This is a paragraph.&lt;/p&gt;</div>
+        <ul class="key-points">
+          <li>The closing tag always has a forward slash <code>/</code>.</li>
+          <li>Some tags like <code>&lt;img&gt;</code> and <code>&lt;br&gt;</code> are "Self-closing."</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>02. Boilerplate Structure</h2>
+      <div class="concept-card">
+        <p>Every HTML file follows a specific hierarchy to be valid. The <code>&lt;body&gt;</code> contains everything visible to the user.</p>
+        <div class="code-display">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Page Title&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- Visible content goes here --&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>03. Semantic Elements</h2>
+      <div class="concept-card">
+        <ul class="key-points">
+          <li><code>&lt;h1&gt;</code> to <code>&lt;h6&gt;</code>: Define headings (H1 is the most important).</li>
+          <li><code>&lt;p&gt;</code>: Defines a text paragraph.</li>
+          <li><code>&lt;a href="..."&gt;</code>: Creates a hyperlink to another page.</li>
+          <li><code>&lt;img src="..."&gt;</code>: Embeds an image into the document.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <a href="dashboard.html" class="btn btn-back">Return to Dashboard</a>
+      <a href="quiz.html" class="btn btn-quiz">Take  Quiz →</a>
+    </div>
+  </div>
+
+</body>
+</html>

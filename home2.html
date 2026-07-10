@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CodeLearn.com</title>
+  <link rel="icon" type="image/png" href="main ico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --blue: #2563eb;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+      --glow: rgba(6,182,212,0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 3rem;
+      background: rgba(5,13,26,0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo:hover img {
+      transform: rotate(5deg) scale(1.1); /* Subtle "hover" effect for the ICT Fair */
+    }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.4rem;
+      color: var(--cyan);
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--green); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--cyan); }
+    .nav-btns { display: flex; gap: .75rem; }
+    .btn {
+      padding: .5rem 1.2rem; border-radius: 6px;
+      font-size: .85rem; font-weight: 600;
+      cursor: pointer; border: none; transition: all .2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--blue);
+      color: var(--blue);
+    }
+    .btn-outline:hover { background: var(--blue); color: #fff; }
+    .btn-solid { background: var(--green); color: #000; }
+    .btn-solid:hover { background: #16a34a; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(37,99,235,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,0.07) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+    .hero-glow {
+      position: absolute;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%);
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.3);
+      border-radius: 100px;
+      padding: .4rem 1rem;
+      font-size: .8rem; color: var(--cyan);
+      font-family: 'Space Mono', monospace;
+      margin-bottom: 1.5rem;
+      animation: fadeUp .6s ease both;
+    }
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      max-width: 800px;
+      animation: fadeUp .6s .1s ease both;
+    }
+    .hero h1 .accent { color: var(--cyan); }
+    .hero h1 .accent2 { color: var(--green); }
+    .hero-sub {
+      margin-top: 1.25rem;
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 560px;
+      line-height: 1.7;
+      animation: fadeUp .6s .2s ease both;
+    }
+    .hero-cta {
+      margin-top: 2.5rem;
+      display: flex; gap: 1rem;
+      animation: fadeUp .6s .3s ease both;
+    }
+    .btn-hero {
+      padding: .85rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer; border: none;
+      font-family: 'Syne', sans-serif;
+      transition: all .2s;
+    }
+    .btn-primary { background: var(--cyan); color: #000; }
+    .btn-primary:hover { background: #0891b2; transform: translateY(-2px); }
+    .btn-secondary {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); }
+
+    .hero-stat-row {
+      margin-top: 4rem;
+      display: flex; gap: 3rem;
+      animation: fadeUp .6s .4s ease both;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem; font-weight: 800;
+      color: var(--cyan);
+    }
+    .stat-label { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
+
+    /* ── PROBLEM ── */
+    .section {
+      padding: 6rem 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem;
+      color: var(--cyan);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: .75rem;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 580px;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .problem-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+    }
+    .problem-card:hover {
+      border-color: rgba(6,182,212,0.4);
+      transform: translateY(-3px);
+    }
+    .problem-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--blue));
+      opacity: 0; transition: opacity .2s;
+    }
+    .problem-card:hover::before { opacity: 1; }
+    .card-icon {
+      font-size: 2rem; margin-bottom: 1rem;
+    }
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1.1rem;
+      margin-bottom: .5rem;
+    }
+    .card-text { color: var(--muted); font-size: .9rem; line-height: 1.6; }
+    .card-stat {
+      margin-top: 1rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 1.5rem; font-weight: 700;
+      color: var(--cyan);
+    }
+
+    /* ── HOW IT WORKS ── */
+    .hiw-wrapper {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .step {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .step-num {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: rgba(6,182,212,0.1);
+      border: 1.5px solid var(--cyan);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700; color: var(--cyan);
+      font-size: 1rem;
+    }
+    .step-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1.05rem;
+      margin-bottom: .5rem;
+    }
+    .step-text { color: var(--muted); font-size: .88rem; line-height: 1.6; }
+
+    /* ── METHODOLOGY ── */
+    .method-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .method-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+    .method-item {
+      display: flex; gap: 1rem; align-items: flex-start;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      transition: border-color .2s;
+    }
+    .method-item:hover { border-color: rgba(34,197,94,0.4); }
+    .method-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--green); margin-top: 5px; flex-shrink: 0;
+    }
+    .method-title { font-weight: 600; font-size: .95rem; margin-bottom: .25rem; }
+    .method-desc { color: var(--muted); font-size: .85rem; line-height: 1.5; }
+
+    .method-visual {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+    }
+    .chart-bars {
+      display: flex; align-items: flex-end; gap: 10px;
+      height: 140px; margin: 1.5rem 0 .75rem;
+      justify-content: center;
+    }
+    .bar {
+      width: 36px; border-radius: 4px 4px 0 0;
+      background: linear-gradient(180deg, var(--cyan), var(--blue));
+      position: relative;
+      animation: growBar 1s ease both;
+    }
+    .bar:nth-child(1) { height: 45%; animation-delay: .1s; }
+    .bar:nth-child(2) { height: 70%; animation-delay: .2s; }
+    .bar:nth-child(3) { height: 55%; animation-delay: .3s; }
+    .bar:nth-child(4) { height: 90%; animation-delay: .4s; background: linear-gradient(180deg, var(--green), #16a34a); }
+    .bar:nth-child(5) { height: 65%; animation-delay: .5s; }
+    @keyframes growBar {
+      from { transform: scaleY(0); transform-origin: bottom; }
+      to { transform: scaleY(1); transform-origin: bottom; }
+    }
+    .chart-label { color: var(--muted); font-size: .8rem; }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all .2s;
+    }
+    .feature-card:hover {
+      border-color: rgba(6,182,212,0.4);
+      transform: translateY(-2px);
+    }
+    .feature-icon { font-size: 1.75rem; margin-bottom: .85rem; }
+    .feature-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1rem;
+      margin-bottom: .4rem;
+    }
+    .feature-text { color: var(--muted); font-size: .85rem; line-height: 1.6; }
+
+    /* ── TEAM ── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .team-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      text-align: center;
+      transition: all .2s;
+    }
+    .team-card:hover { border-color: rgba(6,182,212,0.35); transform: translateY(-3px); }
+    .avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      margin: 0 auto 1rem;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem; font-weight: 800; color: #fff;
+    }
+    .team-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1rem;
+      margin-bottom: .25rem;
+    }
+    .team-role { color: var(--cyan); font-size: .82rem; margin-bottom: .5rem; }
+    .team-bio { color: var(--muted); font-size: .82rem; line-height: 1.5; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 3rem;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem; font-weight: 800;
+      color: var(--cyan); margin-bottom: .5rem;
+    }
+    .footer-meta {
+      color: var(--muted); font-size: .85rem;
+      font-family: 'Space Mono', monospace;
+    }
+    .footer-school {
+      margin-top: .4rem;
+      color: var(--muted); font-size: .8rem;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 60px; height: 3px;
+      background: linear-gradient(90deg, var(--cyan), var(--blue));
+      border-radius: 2px;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+  <img src="main ico.png" alt="CodeLearn Logo" style="height: 40px; vertical-align: middle; margin-right: 10px;">
+  <span>Code</span>Learn</span>
+</div>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#methodology">Research</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#team">Team</a></li>
+  </ul>
+  <div class="nav-btns">
+    <button class="btn btn-outline" onclick="window.location.href='login.html'">Log In</button>
+    <button class="btn btn-solid" onclick="window.location.href='signup.html'">Sign Up</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="badge"> ICT Curriculum Fair 2026</div>
+  <h1>Learn. <span class="accent">Code.</span> <span class="accent2">Achieve.</span></h1>
+  <p class="hero-sub">Bridging Namilyango's digital skills gap through interactive coding lessons, quizzes, and gamified progress tracking — built for every student.</p>
+  <div class="hero-cta">
+    <button class="btn-hero btn-primary">Explore More</button>
+    <button class="btn-hero btn-secondary">See the Research</button>
+  </div>
+  <div class="hero-stat-row">
+    <div class="stat">
+      <div class="stat-num">52%</div>
+      <div class="stat-label">Students lack coding access</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3x</div>
+      <div class="stat-label">Faster learning with gamification</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Core ICT modules covered</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<div id="problem">
+<div class="section reveal">
+  <div class="divider"></div>
+  <h2 class="section-title">Why ICT Education at Namilyango Needs a Rethink</h2>
+  <p class="section-sub">Most students finish school without ever writing a line of code. We investigated why — and built a solution.</p>
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="card-title">Limited Learning resources</div>
+      <div class="card-text">Namilyango cCollege lacks enough  computers in the IT lab , making hands-on code learning nearly impossible.</div>
+      <div class="card-stat">58%</div>
+      <div class="card-text">of surveyed students did not know how to code</div>
+    </div>
+    <div class="problem-card">
+      <div class="card-title">Outdated Curriculum</div>
+      <div class="card-text">ICT syllabi focus on theory over practice. Students memorise definitions but never build anything real.</div>
+      <div class="card-stat">4 in 5</div>
+      <div class="card-text">students couldn't name a single programming language</div>
+    </div>
+    <div class="problem-card">
+      <div class="card-title">Teacher Training Gap</div>
+      <div class="card-text">ICT teachers often teach from textbooks with limited practical experience, limiting what students can learn.</div>
+      <div class="card-stat">65%</div>
+      <div class="card-text">of ICT teachers have not done a coding course themselves</div>
+    </div>
+    <div class="problem-card">
+      <div class="card-title">The Mobile Opportunity</div>
+      <div class="card-text">While computers are scarce, smartphone ownership is rising fast — creating a new pathway for digital learning.</div>
+      <div class="card-stat">89%</div>
+      <div class="card-text">of students have access to a smartphone or shared device</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div id="how" class="hiw-wrapper">
+<div class="section reveal">
+  <div class="divider"></div>
+  <h2 class="section-title">How CodeLearn Works</h2>
+  <p class="section-sub">A three-step journey from total beginner to confident coder — designed to work on any device.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Pick a Learning Path</div>
+      <div class="step-text">Students choose from beginner, intermediate, or advanced ICT tracks. Each path adapts to their current knowledge level.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Learn Through Doing</div>
+      <div class="step-text">Interactive mini-lessons, coding challenges, and real-world scenarios replace passive reading with active problem-solving.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Track & Earn</div>
+      <div class="step-text">Badges, progress bars, and leaderboards keep students motivated. Teachers can monitor class performance in real time.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- METHODOLOGY -->
+<div id="methodology">
+<div class="section reveal">
+  <div class="divider"></div>
+  <h2 class="section-title">How We Researched This Problem</h2>
+  <p class="section-sub">This project is grounded in real data collected from students and teachers at Namilyango College.</p>
+  <div class="method-grid">
+    <ul class="method-list">
+      <li class="method-item">
+        <div class="method-dot"></div>
+        <div>
+          <div class="method-title">Surveys & Interviews</div>
+          <div class="method-desc">We surveyed 120 students and 15 ICT teachers at Namilyango College to understand current challenges and learning habits.</div>
+        </div>
+      </li>
+      <li class="method-item">
+        <div class="method-dot"></div>
+        <div>
+          <div class="method-title">Literature Review</div>
+          <div class="method-desc">We reviewed the national ICT curriculum guidelines, NITA-U reports, and global research on gamified learning outcomes.</div>
+        </div>
+      </li>
+      <li class="method-item">
+        <div class="method-dot"></div>
+        <div>
+          <div class="method-title">Prototype Testing</div>
+          <div class="method-desc">An early version of CodeLearn was tested with 30 students over two weeks. We measured engagement and quiz performance.</div>
+        </div>
+      </li>
+      <li class="method-item">
+        <div class="method-dot"></div>
+        <div>
+          <div class="method-title">Data Analysis</div>
+          <div class="method-desc">Results were compared before and after using the platform. Test scores improved by an average of 34% among regular users.</div>
+        </div>
+      </li>
+    </ul>
+    <div class="method-visual">
+      <div class="section-tag" style="margin-bottom:.5rem">// Test Score Improvement (%)</div>
+      <div class="chart-bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+      <div class="chart-label">Week 1 → Week 2 → Week 3 → Week 4 → Avg</div>
+      <p style="color:var(--muted);font-size:.8rem;margin-top:1rem;line-height:1.5">Students using CodeLearn showed consistent score improvement across all 4 weeks of testing</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- FEATURES -->
+<div id="features" class="hiw-wrapper">
+<div class="section reveal">
+  <div class="section-tag">// Platform Features</div>
+  <div class="divider"></div>
+  <h2 class="section-title">Built for Real Classrooms</h2>
+  <p class="section-sub">Every feature was designed based on what students and teachers said they actually need.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-title">Gamified Learning</div>
+      <div class="feature-text">Points, badges, and streaks make learning addictive. Students compete on leaderboards and unlock new content as they progress.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-title">Mobile-First Design</div>
+      <div class="feature-text">Works on any smartphone browser. No app download needed. Students can learn from home even without a computer.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-title">Interactive Quizzes</div>
+      <div class="feature-text">Drag-and-drop coding exercises and instant feedback help students learn from mistakes in real time.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-title">Teacher Dashboard</div>
+      <div class="feature-text">Teachers see each student's progress, time spent, and weak areas — making it easy to give targeted support.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-title">Offline Mode</div>
+      <div class="feature-text">Core lessons are cached so students can keep learning even when internet connectivity drops.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-title">Certifications</div>
+      <div class="feature-text">Students earn shareable digital certificates when they complete each module — building a real ICT portfolio.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TEAM -->
+<div id="team">
+<div class="section reveal">
+  <div class="divider"></div>
+  <h2 class="section-title">Who Built This</h2>
+  <p class="section-sub">A group of students who believe every student at Namilyango deserves access to quality ICT education.</p>
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="avatar">A</div>
+      <div class="team-name">K'OPIO ZION</div>
+      <div class="team-role"> Team captain</div>
+      <div class="team-bio">Conducted the surveys and Research. Analysed data to identify the core ICT access gaps at Namilyango.</div>
+    </div>
+    <div class="team-card">
+      <div class="avatar" style="background: linear-gradient(135deg, var(--green), var(--cyan));">B</div>
+      <div class="team-name">AHEREZA PHILIP </div>
+      <div class="team-role">Web-developer</div>
+      <div class="team-bio">Designed and built the platform frontend. Passionate about using technology to solve local education problems.</div>
+    </div>
+    <div class="team-card">
+      <div class="avatar" style="background: linear-gradient(135deg, #7c3aed, var(--blue));">C</div>
+      <div class="team-name">Team Member 3</div>
+      <div class="team-role">Curriculum Designer</div>
+      <div class="team-bio">Designed the five learning modules and quiz content, aligning them with the national ICT curriculum.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">CodeLearn</div>
+  <div class="footer-meta">ICT Curriculum Fair — 2026</div>
+  <div class="footer-school">Namilyango College · ICT Curriculum Fair 2026</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => observer.observe(r));
+</script>
+</body>
+</html>

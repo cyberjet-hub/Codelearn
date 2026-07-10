@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings — CodeLearn</title>
+  <link rel="icon" type="image/png" href="main ico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --blue: #2563eb;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --purple: #7c3aed;
+      --red: #ef4444;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+      --sidebar-w: 240px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      padding: 1.5rem 1rem;
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      z-index: 50;
+    }
+    .sidebar-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.3rem;
+      color: var(--cyan);
+      padding: .25rem .75rem 1.75rem;
+    }
+    .sidebar-logo span { color: var(--green); }
+    .sidebar-section {
+      font-family: 'Space Mono', monospace;
+      font-size: .63rem; color: var(--muted);
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: .5rem .75rem .4rem;
+      margin-top: .5rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem .75rem;
+      border-radius: 9px;
+      color: var(--muted);
+      font-size: .88rem; font-weight: 500;
+      cursor: pointer; transition: all .2s;
+      text-decoration: none; margin-bottom: 2px;
+      border: 1px solid transparent;
+    }
+    .nav-item:hover { background: rgba(6,182,212,0.07); color: var(--text); }
+    .nav-item.active {
+      background: rgba(6,182,212,0.12);
+      color: var(--cyan);
+      border-color: rgba(6,182,212,0.2);
+    }
+    .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--cyan); color: #000;
+      font-size: .62rem; font-weight: 700;
+      padding: 1px 6px; border-radius: 100px;
+      font-family: 'Space Mono', monospace;
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+    .user-chip {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem .75rem;
+      border-radius: 9px; cursor: pointer;
+      transition: background .2s;
+    }
+    .user-chip:hover { background: rgba(255,255,255,0.04); }
+    .user-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: .85rem; color: #000;
+      flex-shrink: 0;
+    }
+    .user-info-name { font-size: .85rem; font-weight: 600; color: var(--text); }
+    .user-info-role { font-size: .72rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+    /* MAIN */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+
+    /* TOPBAR */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5,13,26,0.8);
+      backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 40;
+    }
+    .topbar-left h1 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; }
+    .topbar-left p { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    .topbar-right { display: flex; align-items: center; gap: .75rem; }
+    .chip {
+      display: flex; align-items: center; gap: .4rem;
+      border-radius: 100px; padding: .32rem .85rem;
+      font-size: .78rem; font-family: 'Space Mono', monospace;
+    }
+    .chip-yellow { background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.25); color: var(--yellow); }
+    .chip-cyan   { background: rgba(6,182,212,0.1);  border: 1px solid rgba(6,182,212,0.25);  color: var(--cyan); }
+    .notif-btn {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem; transition: border-color .2s;
+      position: relative;
+    }
+    .notif-btn:hover { border-color: var(--cyan); }
+    .notif-dot {
+      position: absolute; top: 6px; right: 6px;
+      width: 7px; height: 7px;
+      background: var(--red); border-radius: 50%;
+      border: 1.5px solid var(--bg);
+    }
+
+    /* CONTENT */
+    .content { padding: 2rem; flex: 1; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+    /* SETTINGS LAYOUT */
+    .settings-layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    /* SETTINGS NAV */
+    .settings-nav {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: .75rem;
+      position: sticky; top: 80px;
+      animation: fadeUp .4s ease both;
+    }
+    .snav-item {
+      display: flex; align-items: center; gap: .65rem;
+      padding: .6rem .75rem; border-radius: 8px;
+      font-size: .85rem; color: var(--muted);
+      cursor: pointer; transition: all .2s;
+      border: 1px solid transparent;
+      margin-bottom: 2px;
+    }
+    .snav-item:hover { background: rgba(6,182,212,0.07); color: var(--text); }
+    .snav-item.active { background: rgba(6,182,212,0.12); color: var(--cyan); border-color: rgba(6,182,212,0.2); }
+    .snav-icon { font-size: .95rem; width: 18px; text-align: center; }
+
+    /* SETTINGS PANELS */
+    .settings-panels { display: flex; flex-direction: column; gap: 1.5rem; }
+    .settings-section {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      animation: fadeUp .5s ease both;
+    }
+    .section-header {
+      padding: 1.1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .section-icon { font-size: 1.1rem; }
+    .section-title {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: .97rem;
+    }
+    .section-desc { font-size: .78rem; color: var(--muted); margin-top: .1rem; }
+    .section-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.1rem; }
+
+    /* FORM ELEMENTS */
+    .form-row {
+      display: flex; flex-direction: column; gap: .45rem;
+    }
+    .form-row-inline {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .form-label {
+      font-size: .78rem; font-weight: 600;
+      color: var(--muted); font-family: 'Space Mono', monospace;
+      text-transform: uppercase; letter-spacing: .5px;
+    }
+    .form-input {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 9px; padding: .7rem 1rem;
+      color: var(--text); font-family: 'Inter', sans-serif;
+      font-size: .88rem; outline: none;
+      transition: border-color .2s;
+      width: 100%;
+    }
+    .form-input:focus { border-color: rgba(6,182,212,0.5); }
+    .form-input::placeholder { color: var(--muted); }
+    .form-textarea {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 9px; padding: .7rem 1rem;
+      color: var(--text); font-family: 'Inter', sans-serif;
+      font-size: .88rem; outline: none; resize: vertical;
+      min-height: 90px; transition: border-color .2s; width: 100%;
+    }
+    .form-textarea:focus { border-color: rgba(6,182,212,0.5); }
+    .form-textarea::placeholder { color: var(--muted); }
+    .form-hint { font-size: .73rem; color: var(--muted); }
+
+    /* AVATAR PICKER */
+    .avatar-row {
+      display: flex; align-items: center; gap: 1.25rem;
+    }
+    .settings-avatar {
+      width: 68px; height: 68px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 1.6rem; color: #000; flex-shrink: 0;
+      border: 3px solid rgba(6,182,212,0.3);
+    }
+    .avatar-actions { display: flex; flex-direction: column; gap: .5rem; }
+    .btn-sm {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: .45rem 1rem;
+      font-family: 'Syne', sans-serif; font-size: .8rem; font-weight: 600;
+      color: var(--text); cursor: pointer; transition: all .2s;
+    }
+    .btn-sm:hover { border-color: rgba(6,182,212,0.4); }
+    .btn-sm-cyan {
+      background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.3);
+      color: var(--cyan);
+    }
+    .btn-sm-cyan:hover { background: rgba(6,182,212,0.2); }
+
+    /* TOGGLE */
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .85rem 1rem; border-radius: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      transition: border-color .2s;
+    }
+    .toggle-row:hover { border-color: rgba(6,182,212,0.2); }
+    .toggle-info {}
+    .toggle-title { font-size: .88rem; font-weight: 500; margin-bottom: .1rem; }
+    .toggle-desc { font-size: .76rem; color: var(--muted); }
+    .toggle-switch {
+      position: relative; width: 46px; height: 24px; flex-shrink: 0; cursor: pointer;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: var(--border); border-radius: 24px;
+      transition: background .2s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute; left: 3px; top: 3px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--muted); transition: all .2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: rgba(6,182,212,0.35); }
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(22px);
+      background: var(--cyan);
+    }
+
+    /* SAVE BAR */
+    .save-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      background: rgba(16,30,53,0.6);
+    }
+    .save-note { font-size: .78rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+    .save-actions { display: flex; gap: .75rem; }
+    .btn-cancel {
+      background: transparent; border: 1px solid var(--border);
+      border-radius: 9px; padding: .55rem 1.2rem;
+      color: var(--muted); font-family: 'Syne', sans-serif;
+      font-size: .85rem; font-weight: 600; cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-cancel:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .btn-save {
+      background: var(--cyan); color: #000; border: none;
+      border-radius: 9px; padding: .55rem 1.4rem;
+      font-family: 'Syne', sans-serif; font-size: .85rem; font-weight: 700;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-save:hover { background: #0891b2; transform: translateY(-1px); }
+
+    /* DANGER ZONE */
+    .danger-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .85rem 1rem; border-radius: 10px;
+      background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15);
+    }
+    .danger-title { font-size: .88rem; font-weight: 500; color: var(--red); margin-bottom: .1rem; }
+    .danger-desc { font-size: .76rem; color: var(--muted); }
+    .btn-danger {
+      background: transparent; border: 1px solid rgba(239,68,68,0.4);
+      border-radius: 8px; padding: .45rem 1rem;
+      color: var(--red); font-family: 'Syne', sans-serif;
+      font-size: .8rem; font-weight: 600; cursor: pointer;
+      transition: all .2s; white-space: nowrap; flex-shrink: 0;
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.1); }
+
+    /* SUCCESS TOAST */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.35);
+      color: var(--green);
+      padding: .75rem 1.3rem; border-radius: 10px;
+      font-family: 'Space Mono', monospace; font-size: .82rem;
+      display: flex; align-items: center; gap: .6rem;
+      transform: translateY(80px); opacity: 0;
+      transition: all .35s cubic-bezier(.34,1.56,.64,1);
+      z-index: 999; pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    @media(max-width:900px){ .settings-layout{grid-template-columns:1fr} .settings-nav{display:none} }
+    @media(max-width:768px){ .sidebar{transform:translateX(-100%)} .main{margin-left:0} }
+    @media(max-width:480px){ .content{padding:1rem} .topbar{padding:1rem} .form-row-inline{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Code<span>Learn</span></div>
+
+  <div class="sidebar-section">// Main</div>
+  <a class="nav-item" href="dashboard.html">
+    <span class="nav-icon">🏠</span> Dashboard
+  </a>
+  <a class="nav-item" href="modules.html">
+    <span class="nav-icon">📚</span> Modules
+    <span class="nav-badge">5</span>
+  </a>
+  <a class="nav-item" href="quiz.html">
+    <span class="nav-icon">🧪</span> Quizzes
+    <span class="nav-badge">2</span>
+  </a>
+  <a class="nav-item" href="leaderboard.html">
+    <span class="nav-icon">🏆</span> Leaderboard
+  </a>
+
+  <div class="sidebar-section">// Account</div>
+  <a class="nav-item" href="profile.html">
+    <span class="nav-icon">👤</span> Profile
+  </a>
+  <a class="nav-item active" href="settings.html">
+    <span class="nav-icon">⚙️</span> Settings
+  </a>
+  <a class="nav-item" href="home2.html">
+    <span class="nav-icon">🌐</span> Back to home
+  </a>
+
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar" id="sidebarInitial">S</div>
+      <div>
+        <div class="user-info-name" id="sidebarName">Student</div>
+        <div class="user-info-role">// student</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Settings</h1>
+      <p>Manage your account, preferences &amp; notifications</p>
+    </div>
+    <div class="topbar-right">
+      <div class="chip chip-yellow">🔥 7-day streak</div>
+      <div class="chip chip-cyan">⚡ 1,340 XP</div>
+      <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="settings-layout">
+
+      <!-- LEFT NAV -->
+      <div class="settings-nav">
+        <div class="snav-item active" onclick="scrollTo('profile-section')">
+          <span class="snav-icon">👤</span> Profile
+        </div>
+        <div class="snav-item" onclick="scrollTo('account-section')">
+          <span class="snav-icon">🔑</span> Account
+        </div>
+        <div class="snav-item" onclick="scrollTo('notif-section')">
+          <span class="snav-icon">🔔</span> Notifications
+        </div>
+        <div class="snav-item" onclick="scrollTo('learning-section')">
+          <span class="snav-icon">📚</span> Learning
+        </div>
+        <div class="snav-item" onclick="scrollTo('danger-section')">
+          <span class="snav-icon">⚠️</span> Danger Zone
+        </div>
+      </div>
+
+      <!-- PANELS -->
+      <div class="settings-panels">
+
+        <!-- PROFILE INFO -->
+        <div class="settings-section" id="profile-section">
+          <div class="section-header">
+            <span class="section-icon">👤</span>
+            <div>
+              <div class="section-title">Profile Information</div>
+              <div class="section-desc">Update your name, bio, and avatar</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <!-- AVATAR -->
+            <div class="form-row">
+              <div class="form-label">Avatar</div>
+              <div class="avatar-row">
+                <div class="settings-avatar" id="settingsAvatarInitial">S</div>
+                <div class="avatar-actions">
+                  <button class="btn-sm btn-sm-cyan">📷 Upload Photo</button>
+                  <button class="btn-sm">🎨 Choose Color</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row-inline">
+              <div class="form-row">
+                <label class="form-label">First Name</label>
+                <input class="form-input" type="text" id="inputFirstName" placeholder="Enter first name"/>
+              </div>
+              <div class="form-row">
+                <label class="form-label">Last Name</label>
+                <input class="form-input" type="text" id="inputLastName" placeholder="Enter last name"/>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label">Username</label>
+              <input class="form-input" type="text" id="inputUsername" placeholder="@username"/>
+              <span class="form-hint">This appears on your public profile and leaderboard.</span>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label">Bio</label>
+              <textarea class="form-textarea" id="inputBio" placeholder="Tell the CodeLearn community a little about yourself..."></textarea>
+              <span class="form-hint">Max 160 characters.</span>
+            </div>
+          </div>
+          <div class="save-bar">
+            <span class="save-note">// profile changes</span>
+            <div class="save-actions">
+              <button class="btn-cancel" onclick="resetProfile()">Cancel</button>
+              <button class="btn-save" onclick="saveProfile()">Save Changes</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACCOUNT -->
+        <div class="settings-section" id="account-section">
+          <div class="section-header">
+            <span class="section-icon">🔑</span>
+            <div>
+              <div class="section-title">Account &amp; Security</div>
+              <div class="section-desc">Update your email and password</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="form-row">
+              <label class="form-label">Email Address</label>
+              <input class="form-input" type="email" id="inputEmail" placeholder="you@example.com"/>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Current Password</label>
+              <input class="form-input" type="password" placeholder="Enter current password"/>
+            </div>
+            <div class="form-row-inline">
+              <div class="form-row">
+                <label class="form-label">New Password</label>
+                <input class="form-input" type="password" placeholder="New password"/>
+              </div>
+              <div class="form-row">
+                <label class="form-label">Confirm Password</label>
+                <input class="form-input" type="password" placeholder="Repeat new password"/>
+              </div>
+            </div>
+            <div class="form-hint">Password must be at least 8 characters with one uppercase letter and one number.</div>
+          </div>
+          <div class="save-bar">
+            <span class="save-note">// security changes</span>
+            <div class="save-actions">
+              <button class="btn-cancel">Cancel</button>
+              <button class="btn-save" onclick="showToast('Password updated!')">Update Password</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div class="settings-section" id="notif-section">
+          <div class="section-header">
+            <span class="section-icon">🔔</span>
+            <div>
+              <div class="section-title">Notifications</div>
+              <div class="section-desc">Choose what you want to be notified about</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">Streak Reminders</div>
+                <div class="toggle-desc">Daily reminder to keep your learning streak alive</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked onchange="showToast('Notification preference saved')"/>
+                <div class="toggle-slider"></div>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">Quiz Available</div>
+                <div class="toggle-desc">Notify when a new quiz is ready for you</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked onchange="showToast('Notification preference saved')"/>
+                <div class="toggle-slider"></div>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">Badge &amp; Achievement Alerts</div>
+                <div class="toggle-desc">Celebrate when you earn a new badge or level up</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked onchange="showToast('Notification preference saved')"/>
+                <div class="toggle-slider"></div>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">New Module Unlocked</div>
+                <div class="toggle-desc">Alert when a new module becomes available to you</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" onchange="showToast('Notification preference saved')"/>
+                <div class="toggle-slider"></div>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">Leaderboard Updates</div>
+                <div class="toggle-desc">Weekly summary of your leaderboard rank</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" onchange="showToast('Notification preference saved')"/>
+                <div class="toggle-slider"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- LEARNING PREFERENCES -->
+        <div class="settings-section" id="learning-section">
+          <div class="section-header">
+            <span class="section-icon">📚</span>
+            <div>
+              <div class="section-title">Learning Preferences</div>
+              <div class="section-desc">Customise your learning experience</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">Auto-play Next Lesson</div>
+                <div class="toggle-desc">Automatically move to the next lesson when one ends</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked onchange="showToast('Preference saved')"/>
+                <div class="toggle-slider"></div>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">Show XP Animations</div>
+                <div class="toggle-desc">Display XP gain animations after completing lessons</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked onchange="showToast('Preference saved')"/>
+                <div class="toggle-slider"></div>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">Compact Mode</div>
+                <div class="toggle-desc">Show more content with reduced spacing on the dashboard</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" onchange="showToast('Preference saved')"/>
+                <div class="toggle-slider"></div>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label">Daily Goal</label>
+              <select class="form-input" onchange="showToast('Daily goal updated')">
+                <option>5 minutes / day</option>
+                <option selected>15 minutes / day</option>
+                <option>30 minutes / day</option>
+                <option>1 hour / day</option>
+              </select>
+              <span class="form-hint">Set a daily learning target to stay on track.</span>
+            </div>
+          </div>
+          <div class="save-bar">
+            <span class="save-note">// learning prefs</span>
+            <div class="save-actions">
+              <button class="btn-cancel">Cancel</button>
+              <button class="btn-save" onclick="showToast('Preferences saved!')">Save Preferences</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DANGER ZONE -->
+        <div class="settings-section" id="danger-section">
+          <div class="section-header">
+            <span class="section-icon">⚠️</span>
+            <div>
+              <div class="section-title">Danger Zone</div>
+              <div class="section-desc">Irreversible actions — proceed with caution</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="danger-row">
+              <div>
+                <div class="danger-title">Reset Progress</div>
+                <div class="danger-desc">Wipe all XP, badges, streaks, and module progress. Cannot be undone.</div>
+              </div>
+              <button class="btn-danger" onclick="confirmAction('reset')">Reset All Progress</button>
+            </div>
+            <div class="danger-row">
+              <div>
+                <div class="danger-title">Delete Account</div>
+                <div class="danger-desc">Permanently delete your account and all associated data.</div>
+              </div>
+              <button class="btn-danger" onclick="confirmAction('delete')">Delete Account</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ <span id="toastMsg">Saved!</span></div>
+
+<script>
+  // Load user from localStorage
+  let userData = { firstName: 'Student', lastName: '', email: '' };
+  try {
+    const saved = localStorage.getItem('cl_user');
+    if (saved) {
+      userData = { ...userData, ...JSON.parse(saved) };
+    }
+  } catch(e) {}
+
+  function applyUser() {
+    const first = userData.firstName || 'Student';
+    const last  = userData.lastName  || '';
+    const full  = first + (last ? ' ' + last : '');
+    document.getElementById('sidebarName').textContent      = full;
+    document.getElementById('sidebarInitial').textContent   = first.charAt(0).toUpperCase();
+    document.getElementById('settingsAvatarInitial').textContent = first.charAt(0).toUpperCase();
+    document.getElementById('inputFirstName').value = first;
+    document.getElementById('inputLastName').value  = last;
+    document.getElementById('inputUsername').value  = '@' + first.toLowerCase();
+    if (userData.email) document.getElementById('inputEmail').value = userData.email;
+  }
+  applyUser();
+
+  function saveProfile() {
+    const first = document.getElementById('inputFirstName').value.trim() || 'Student';
+    const last  = document.getElementById('inputLastName').value.trim();
+    userData.firstName = first;
+    userData.lastName  = last;
+    try { localStorage.setItem('cl_user', JSON.stringify(userData)); } catch(e) {}
+    applyUser();
+    showToast('Profile saved!');
+  }
+
+  function resetProfile() {
+    applyUser();
+    showToast('Changes discarded');
+  }
+
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  function confirmAction(type) {
+    const msg = type === 'delete'
+      ? 'Are you sure you want to permanently delete your account? This cannot be undone.'
+      : 'Are you sure you want to reset all your progress? This cannot be undone.';
+    if (confirm(msg)) {
+      if (type === 'delete') {
+        try { localStorage.removeItem('cl_user'); } catch(e) {}
+        window.location.href = 'home2.html';
+      } else {
+        showToast('Progress has been reset.');
+      }
+    }
+  }
+
+  function scrollTo(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.snav-item').forEach(el => el.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
+
+  // Highlight active snav on scroll
+  const sections = ['profile-section','account-section','notif-section','learning-section','danger-section'];
+  const snavItems = document.querySelectorAll('.snav-item');
+  window.addEventListener('scroll', () => {
+    let current = sections[0];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top < 160) current = id;
+    });
+    snavItems.forEach((el, i) => {
+      el.classList.toggle('active', sections[i] === current);
+    });
+  });
+</script>
+</body>
+</html>

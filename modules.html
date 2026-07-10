@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Modules — CodeLearn</title>
+  <link rel="icon" type="image/png" href="main ico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --blue: #2563eb;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --purple: #7c3aed;
+      --red: #ef4444;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+      --sidebar-w: 240px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      padding: 1.5rem 1rem;
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      z-index: 50;
+    }
+    .sidebar-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.3rem;
+      color: var(--cyan);
+      padding: .25rem .75rem 1.75rem;
+    }
+    .sidebar-logo span { color: var(--green); }
+    .sidebar-section {
+      font-family: 'Space Mono', monospace;
+      font-size: .63rem; color: var(--muted);
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: .5rem .75rem .4rem;
+      margin-top: .5rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem .75rem;
+      border-radius: 9px;
+      color: var(--muted);
+      font-size: .88rem; font-weight: 500;
+      cursor: pointer; transition: all .2s;
+      text-decoration: none; margin-bottom: 2px;
+      border: 1px solid transparent;
+    }
+    .nav-item:hover { background: rgba(6,182,212,0.07); color: var(--text); }
+    .nav-item.active {
+      background: rgba(6,182,212,0.12);
+      color: var(--cyan);
+      border-color: rgba(6,182,212,0.2);
+    }
+    .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--cyan); color: #000;
+      font-size: .62rem; font-weight: 700;
+      padding: 1px 6px; border-radius: 100px;
+      font-family: 'Space Mono', monospace;
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+    .user-chip {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem .75rem;
+      border-radius: 9px; cursor: pointer;
+      transition: background .2s;
+    }
+    .user-chip:hover { background: rgba(255,255,255,0.04); }
+    .user-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: .85rem; color: #000;
+      flex-shrink: 0;
+    }
+    .user-info-name { font-size: .85rem; font-weight: 600; color: var(--text); }
+    .user-info-role { font-size: .72rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+    /* ── MAIN ── */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5,13,26,0.8);
+      backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 40;
+    }
+    .topbar-left h1 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; }
+    .topbar-left p { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    .topbar-right { display: flex; align-items: center; gap: .75rem; }
+    .chip {
+      display: flex; align-items: center; gap: .4rem;
+      border-radius: 100px; padding: .32rem .85rem;
+      font-size: .78rem; font-family: 'Space Mono', monospace;
+    }
+    .chip-yellow { background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.25); color: var(--yellow); }
+    .chip-cyan   { background: rgba(6,182,212,0.1);  border: 1px solid rgba(6,182,212,0.25);  color: var(--cyan); }
+    .notif-btn {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem; transition: border-color .2s;
+      position: relative;
+    }
+    .notif-btn:hover { border-color: var(--cyan); }
+    .notif-dot {
+      position: absolute; top: 6px; right: 6px;
+      width: 7px; height: 7px;
+      background: var(--red); border-radius: 50%;
+      border: 1.5px solid var(--bg);
+    }
+
+    /* ── CONTENT ── */
+    .content { padding: 2rem; flex: 1; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 1.75rem;
+      animation: fadeUp .4s ease both;
+    }
+    .page-header-left h2 {
+      font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800;
+      margin-bottom: .3rem;
+    }
+    .page-header-left p { color: var(--muted); font-size: .87rem; }
+
+    /* ── PROGRESS OVERVIEW ── */
+    .progress-overview {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1rem; margin-bottom: 2rem;
+      animation: fadeUp .45s ease both;
+    }
+    .prog-stat {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.1rem 1.3rem;
+      position: relative; overflow: hidden;
+      transition: border-color .2s, transform .2s;
+    }
+    .prog-stat:hover { transform: translateY(-2px); border-color: rgba(6,182,212,0.3); }
+    .prog-stat::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      border-radius: 14px 14px 0 0;
+    }
+    .ps1::before { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+    .ps2::before { background: linear-gradient(90deg, var(--cyan), var(--blue)); }
+    .ps3::before { background: linear-gradient(90deg, var(--yellow), #f97316); }
+    .ps4::before { background: linear-gradient(90deg, var(--purple), var(--blue)); }
+    .prog-stat-label { font-size: .7rem; color: var(--muted); font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: .5px; margin-bottom: .4rem; }
+    .prog-stat-val { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; line-height: 1; margin-bottom: .2rem; }
+    .prog-stat-sub { font-size: .74rem; color: var(--muted); }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      display: flex; align-items: center; gap: .6rem;
+      margin-bottom: 1.75rem;
+      animation: fadeUp .5s ease both;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem; font-weight: 700;
+      padding: .45rem 1rem; border-radius: 100px;
+      border: 1px solid var(--border);
+      background: var(--card); color: var(--muted);
+      cursor: pointer; transition: all .2s;
+    }
+    .filter-btn:hover { color: var(--text); border-color: rgba(6,182,212,0.3); }
+    .filter-btn.active {
+      background: rgba(6,182,212,0.12);
+      color: var(--cyan); border-color: rgba(6,182,212,0.3);
+    }
+    .filter-sep { flex: 1; }
+    .search-wrap {
+      display: flex; align-items: center; gap: .5rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 9px; padding: .4rem .9rem;
+      transition: border-color .2s;
+    }
+    .search-wrap:focus-within { border-color: rgba(6,182,212,0.4); }
+    .search-wrap input {
+      background: none; border: none; outline: none;
+      color: var(--text); font-size: .83rem; font-family: 'Inter', sans-serif;
+      width: 180px;
+    }
+    .search-wrap input::placeholder { color: var(--muted); }
+    .search-icon { color: var(--muted); font-size: .9rem; }
+
+    /* ── MODULES GRID ── */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* ── MODULE CARD ── */
+    .module-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+      cursor: pointer; transition: border-color .25s, transform .2s, box-shadow .25s;
+      animation: fadeUp .5s ease both;
+      display: flex; flex-direction: column;
+      position: relative;
+    }
+    .module-card:hover {
+      border-color: rgba(6,182,212,0.35);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .module-card.locked { cursor: default; }
+    .module-card.locked:hover { transform: none; box-shadow: none; border-color: var(--border); }
+
+    .module-card:nth-child(1){animation-delay:.05s}
+    .module-card:nth-child(2){animation-delay:.10s}
+    .module-card:nth-child(3){animation-delay:.15s}
+    .module-card:nth-child(4){animation-delay:.20s}
+    .module-card:nth-child(5){animation-delay:.25s}
+
+    .card-banner {
+      height: 90px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 1.4rem;
+      position: relative; overflow: hidden;
+    }
+    .card-banner::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .banner-emoji { font-size: 2.2rem; position: relative; z-index: 1; }
+    .banner-status { position: relative; z-index: 1; }
+
+    .status-pill {
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem; font-weight: 700;
+      padding: .25rem .7rem; border-radius: 100px;
+    }
+    .sp-done   { background: rgba(34,197,94,0.15);  color: var(--green);  border: 1px solid rgba(34,197,94,0.3); }
+    .sp-active { background: rgba(6,182,212,0.15);  color: var(--cyan);   border: 1px solid rgba(6,182,212,0.3); }
+    .sp-locked { background: rgba(122,144,176,0.1); color: var(--muted);  border: 1px solid var(--border); }
+
+    .card-body { padding: 1.2rem 1.4rem; flex: 1; display: flex; flex-direction: column; }
+    .card-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 800; margin-bottom: .3rem; }
+    .card-desc { font-size: .82rem; color: var(--muted); line-height: 1.5; margin-bottom: 1rem; flex: 1; }
+
+    .card-meta-row {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: .9rem;
+    }
+    .meta-chip {
+      display: flex; align-items: center; gap: .35rem;
+      font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--muted);
+    }
+
+    .card-progress { margin-bottom: 1rem; }
+    .prog-label-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: .4rem;
+    }
+    .prog-label { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--muted); }
+    .prog-pct { font-family: 'Space Mono', monospace; font-size: .68rem; }
+    .prog-bar { height: 5px; background: var(--border); border-radius: 5px; overflow: hidden; }
+    .prog-fill { height: 100%; border-radius: 5px; }
+
+    .card-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; }
+    .tag {
+      font-family: 'Space Mono', monospace; font-size: .62rem;
+      padding: .2rem .55rem; border-radius: 5px;
+      background: rgba(37,99,235,0.1); color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .card-action {
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid var(--border); padding-top: 1rem;
+      margin-top: auto;
+    }
+    .xp-reward {
+      font-family: 'Space Mono', monospace; font-size: .72rem;
+      color: var(--yellow);
+    }
+    .action-btn {
+      font-family: 'Syne', sans-serif; font-size: .82rem; font-weight: 700;
+      padding: .5rem 1.2rem; border-radius: 8px; border: none;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-start   { background: var(--cyan); color: #000; }
+    .btn-start:hover { background: #0891b2; transform: translateY(-1px); }
+    .btn-continue { background: rgba(6,182,212,0.15); color: var(--cyan); border: 1px solid rgba(6,182,212,0.3); }
+    .btn-continue:hover { background: rgba(6,182,212,0.25); transform: translateY(-1px); }
+    .btn-review  { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+    .btn-review:hover { background: rgba(34,197,94,0.2); transform: translateY(-1px); }
+    .btn-locked  { background: var(--border); color: var(--muted); cursor: not-allowed; }
+
+    .locked-overlay {
+      position: absolute; inset: 0;
+      background: rgba(5,13,26,0.45);
+      backdrop-filter: blur(1px);
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 16px;
+      pointer-events: none;
+    }
+    .lock-msg {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: .6rem 1.2rem;
+      font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--muted);
+    }
+
+    /* ── CERTIFICATE BANNER ── */
+    .cert-banner {
+      background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(6,182,212,0.08));
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 14px; padding: 1.25rem 1.5rem;
+      display: flex; align-items: center; gap: 1.25rem;
+      margin-bottom: 1.75rem;
+      animation: fadeUp .4s .05s ease both;
+      position: relative; overflow: hidden;
+    }
+    .cert-banner::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(34,197,94,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,197,94,0.04) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .cert-icon { font-size: 2rem; position: relative; z-index: 1; flex-shrink: 0; }
+    .cert-text { position: relative; z-index: 1; }
+    .cert-text strong { font-family: 'Syne', sans-serif; font-size: .95rem; font-weight: 700; display: block; margin-bottom: .2rem; }
+    .cert-text span { font-size: .8rem; color: var(--muted); }
+    .cert-btn {
+      margin-left: auto; position: relative; z-index: 1; flex-shrink: 0;
+      background: var(--green); color: #000; border: none; border-radius: 8px;
+      padding: .55rem 1.2rem; font-family: 'Syne', sans-serif;
+      font-size: .82rem; font-weight: 700; cursor: pointer; transition: all .2s;
+    }
+    .cert-btn:hover { background: #16a34a; transform: translateY(-1px); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center; padding: 4rem 2rem;
+      color: var(--muted);
+      display: none;
+    }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .empty-state p { font-size: .88rem; font-family: 'Space Mono', monospace; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px) {
+      .sidebar { transform: translateX(-100%); }
+      .main { margin-left: 0; }
+      .progress-overview { grid-template-columns: 1fr 1fr; }
+    }
+    @media(max-width:480px) {
+      .content { padding: 1rem; }
+      .topbar { padding: 1rem; }
+      .progress-overview { grid-template-columns: 1fr 1fr; }
+      .modules-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Code<span>Learn</span></div>
+
+  <div class="sidebar-section">// Main</div>
+  <a class="nav-item" href="dashboard.html">
+    <span class="nav-icon">🏠</span> Dashboard
+  </a>
+  <a class="nav-item active" href="modules.html">
+    <span class="nav-icon">📚</span> Modules
+    <span class="nav-badge">5</span>
+  </a>
+  <a class="nav-item" href="quiz.html">
+    <span class="nav-icon">🧪</span> Quizzes
+    <span class="nav-badge">2</span>
+  </a>
+  <a class="nav-item" href="leaderboard.html">
+    <span class="nav-icon">🏆</span> Leaderboard
+  </a>
+
+  <div class="sidebar-section">// Account</div>
+  <a class="nav-item" href="profile.html">
+    <span class="nav-icon">👤</span> Profile
+  </a>
+  <a class="nav-item" href="settings.html">
+    <span class="nav-icon">⚙️</span> Settings
+  </a>
+  <a class="nav-item" href="home2.html">
+    <span class="nav-icon">🌐</span> Back to home
+  </a>
+
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar" id="sidebarInitial">S</div>
+      <div>
+        <div class="user-info-name" id="sidebarName">Student</div>
+        <div class="user-info-role">// student</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Modules</h1>
+      <p>Your full learning path — track progress and earn certificates</p>
+    </div>
+    <div class="topbar-right">
+      <div class="chip chip-yellow">🔥 7-day streak</div>
+      <div class="chip chip-cyan">⚡ 1,340 XP</div>
+      <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h2>My Learning Path</h2>
+        <p>Complete modules in order to unlock the full curriculum and earn your certificate.</p>
+      </div>
+    </div>
+
+    <!-- PROGRESS OVERVIEW -->
+    <div class="progress-overview">
+      <div class="prog-stat ps1">
+        <div class="prog-stat-label">Completed</div>
+        <div class="prog-stat-val c-green">2</div>
+        <div class="prog-stat-sub">of 5 modules</div>
+      </div>
+      <div class="prog-stat ps2">
+        <div class="prog-stat-label">In Progress</div>
+        <div class="prog-stat-val c-cyan">1</div>
+        <div class="prog-stat-sub">32% through Python</div>
+      </div>
+      <div class="prog-stat ps3">
+        <div class="prog-stat-label">Total XP Earned</div>
+        <div class="prog-stat-val c-yellow">1,340</div>
+        <div class="prog-stat-sub">660 XP to Level 6</div>
+      </div>
+      <div class="prog-stat ps4">
+        <div class="prog-stat-label">Certificates</div>
+        <div class="prog-stat-val c-purple">2</div>
+        <div class="prog-stat-sub">3 more available</div>
+      </div>
+    </div>
+
+    <!-- CERTIFICATE BANNER -->
+    <div class="cert-banner">
+      <div class="cert-icon">🎓</div>
+      <div class="cert-text">
+        <strong>2 Certificates Earned</strong>
+        <span>You've completed HTML &amp; Networks — download or share your certificates anytime.</span>
+      </div>
+      <button class="cert-btn" onclick="window.location.href='certificates.html'">View Certificates →</button>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">All Modules</button>
+      <button class="filter-btn" data-filter="done">✓ Completed</button>
+      <button class="filter-btn" data-filter="active">▶ In Progress</button>
+      <button class="filter-btn" data-filter="locked">🔒 Locked</button>
+      <div class="filter-sep"></div>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search modules…">
+      </div>
+    </div>
+
+    <!-- MODULES GRID -->
+    <div class="modules-grid" id="modulesGrid">
+
+      <!-- MODULE 1: HTML (done) -->
+      <div class="module-card" data-status="done" data-title="introduction to html">
+        <div class="card-banner" style="background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(6,182,212,0.1))">
+          <span class="banner-emoji">🌐</span>
+          <span class="status-pill sp-done">✓ Completed</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Introduction to HTML</div>
+          <div class="card-desc">Learn the building blocks of the web — elements, attributes, forms, tables, and semantic structure.</div>
+          <div class="card-meta-row">
+            <span class="meta-chip">📖 12 lessons</span>
+            <span class="meta-chip">⏱ 45 min</span>
+            <span class="meta-chip">⭐ Beginner</span>
+          </div>
+          <div class="card-progress">
+            <div class="prog-label-row">
+              <span class="prog-label">// Progress</span>
+              <span class="prog-pct c-green">100%</span>
+            </div>
+            <div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">HTML5</span>
+            <span class="tag">Semantic</span>
+            <span class="tag">Forms</span>
+            <span class="tag">Tables</span>
+          </div>
+          <div class="card-action">
+            <span class="xp-reward">⚡ 400 XP earned</span>
+            <button class="action-btn btn-review" onclick="window.location.href='html-review.html'">Review →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 2: Networks (done) -->
+      <div class="module-card" data-status="done" data-title="networks and the internet">
+        <div class="card-banner" style="background:linear-gradient(135deg,rgba(6,182,212,0.15),rgba(37,99,235,0.1))">
+          <span class="banner-emoji">🔗</span>
+          <span class="status-pill sp-done">✓ Completed</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Networks &amp; the Internet</div>
+          <div class="card-desc">Understand how data travels across networks — IP, DNS, HTTP, TCP/IP, and how the internet actually works.</div>
+          <div class="card-meta-row">
+            <span class="meta-chip">📖 10 lessons</span>
+            <span class="meta-chip">⏱ 40 min</span>
+            <span class="meta-chip">⭐ Beginner</span>
+          </div>
+          <div class="card-progress">
+            <div class="prog-label-row">
+              <span class="prog-label">// Progress</span>
+              <span class="prog-pct c-green">100%</span>
+            </div>
+            <div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">TCP/IP</span>
+            <span class="tag">DNS</span>
+            <span class="tag">HTTP</span>
+            <span class="tag">Protocols</span>
+          </div>
+          <div class="card-action">
+            <span class="xp-reward">⚡ 380 XP earned</span>
+            <button class="action-btn btn-review" onclick="window.location.href='networking-review.html'">Review →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 3: Python (in progress) -->
+      <div class="module-card" data-status="active" data-title="python programming">
+        <div class="card-banner" style="background:linear-gradient(135deg,rgba(37,99,235,0.2),rgba(124,58,237,0.1))">
+          <span class="banner-emoji">🐍</span>
+          <span class="status-pill sp-active">▶ In Progress</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Python Programming</div>
+          <div class="card-desc">Master Python from variables and loops to functions, file handling, and object-oriented programming fundamentals.</div>
+          <div class="card-meta-row">
+            <span class="meta-chip">📖 18 lessons</span>
+            <span class="meta-chip">⏱ 1hr 20min</span>
+            <span class="meta-chip">⭐ Intermediate</span>
+          </div>
+          <div class="card-progress">
+            <div class="prog-label-row">
+              <span class="prog-label">// Progress</span>
+              <span class="prog-pct c-cyan">32%</span>
+            </div>
+            <div class="prog-bar"><div class="prog-fill" style="width:32%;background:var(--cyan)"></div></div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">Variables</span>
+            <span class="tag">Loops</span>
+            <span class="tag">Functions</span>
+            <span class="tag">OOP</span>
+          </div>
+          <div class="card-action">
+            <span class="xp-reward">⚡ 600 XP available</span>
+            <button class="action-btn btn-continue" onclick="window.location.href='python-variables.html'">Continue →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 4: Databases (locked) -->
+      <div class="module-card locked" data-status="locked" data-title="databases and sql">
+        <div class="card-banner" style="background:linear-gradient(135deg,rgba(122,144,176,0.1),rgba(37,99,235,0.05));opacity:.6">
+          <span class="banner-emoji">🗄️</span>
+          <span class="status-pill sp-locked">🔒 Locked</span>
+        </div>
+        <div class="card-body" style="opacity:.55">
+          <div class="card-title">Databases &amp; SQL</div>
+          <div class="card-desc">Learn to design, query, and manage relational databases using SQL — from SELECT statements to joins and indexes.</div>
+          <div class="card-meta-row">
+            <span class="meta-chip">📖 14 lessons</span>
+            <span class="meta-chip">⏱ 55 min</span>
+            <span class="meta-chip">⭐ Intermediate</span>
+          </div>
+          <div class="card-progress">
+            <div class="prog-label-row">
+              <span class="prog-label">// Progress</span>
+              <span class="prog-pct">0%</span>
+            </div>
+            <div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">SQL</span>
+            <span class="tag">Joins</span>
+            <span class="tag">Indexes</span>
+            <span class="tag">CRUD</span>
+          </div>
+          <div class="card-action">
+            <span class="xp-reward">⚡ 550 XP available</span>
+            <button class="action-btn btn-locked" disabled>🔒 Locked</button>
+          </div>
+        </div>
+        <div class="locked-overlay">
+          <div class="lock-msg">Complete Python to unlock</div>
+        </div>
+      </div>
+
+      <!-- MODULE 5: Cybersecurity (locked) -->
+      <div class="module-card locked" data-status="locked" data-title="cybersecurity basics">
+        <div class="card-banner" style="background:linear-gradient(135deg,rgba(124,58,237,0.12),rgba(239,68,68,0.08));opacity:.6">
+          <span class="banner-emoji">🔐</span>
+          <span class="status-pill sp-locked">🔒 Locked</span>
+        </div>
+        <div class="card-body" style="opacity:.55">
+          <div class="card-title">Cybersecurity Basics</div>
+          <div class="card-desc">Explore threats, defences, encryption, and best practices — understand how to protect systems and data from attackers.</div>
+          <div class="card-meta-row">
+            <span class="meta-chip">📖 16 lessons</span>
+            <span class="meta-chip">⏱ 1hr 10min</span>
+            <span class="meta-chip">⭐ Advanced</span>
+          </div>
+          <div class="card-progress">
+            <div class="prog-label-row">
+              <span class="prog-label">// Progress</span>
+              <span class="prog-pct">0%</span>
+            </div>
+            <div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">Encryption</span>
+            <span class="tag">Threats</span>
+            <span class="tag">Firewalls</span>
+            <span class="tag">Best Practices</span>
+          </div>
+          <div class="card-action">
+            <span class="xp-reward">⚡ 700 XP available</span>
+            <button class="action-btn btn-locked" disabled>🔒 Locked</button>
+          </div>
+        </div>
+        <div class="locked-overlay">
+          <div class="lock-msg">Complete Databases to unlock</div>
+        </div>
+      </div>
+
+    </div><!-- /modules-grid -->
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🔍</div>
+      <p>No modules match your search.</p>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+  // Load user from localStorage
+  try {
+    const saved = localStorage.getItem('cl_user');
+    if (saved) {
+      const user = JSON.parse(saved);
+      const first = user.firstName || 'Student';
+      const last  = user.lastName  || '';
+      document.getElementById('sidebarName').textContent    = first + (last ? ' ' + last : '');
+      document.getElementById('sidebarInitial').textContent = first.charAt(0).toUpperCase();
+    }
+  } catch(e) {}
+
+  // Filter logic
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.module-card');
+  const emptyState = document.getElementById('emptyState');
+  const searchInput = document.getElementById('searchInput');
+
+  let currentFilter = 'all';
+  let currentSearch = '';
+
+  function applyFilters() {
+    let visible = 0;
+    cards.forEach(card => {
+      const status = card.dataset.status;
+      const title  = card.dataset.title;
+      const matchFilter = currentFilter === 'all' || status === currentFilter;
+      const matchSearch = title.includes(currentSearch.toLowerCase());
+      if (matchFilter && matchSearch) {
+        card.style.display = '';
+        visible++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    emptyState.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      applyFilters();
+    });
+  });
+
+  searchInput.addEventListener('input', e => {
+    currentSearch = e.target.value.trim();
+    applyFilters();
+  });
+</script>
+</body>
+</html>

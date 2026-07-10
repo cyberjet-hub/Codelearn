@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HTML Quiz #1 — CodeLearn</title>
+  <link rel="icon" type="image/png" href="main ico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+    }
+
+    /* HEADER / PROGRESS */
+    .quiz-header {
+      padding: 1.5rem 2rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .back-btn {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: var(--cyan); }
+
+    .progress-container {
+      flex: 1;
+      max-width: 500px;
+      margin: 0 2rem;
+    }
+    .progress-bar-bg {
+      height: 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 20%; /* Dynamic */
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+      transition: width 0.4s ease;
+    }
+
+    /* QUIZ AREA */
+    .quiz-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .question-card {
+      width: 100%;
+      max-width: 700px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      position: relative;
+    }
+    .q-meta {
+      font-family: 'Space Mono', monospace;
+      color: var(--cyan);
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .q-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 2rem;
+    }
+
+    /* CODE BOX (Optional) */
+    .code-snippet {
+      background: #000;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.9rem;
+      color: #a5d6ff;
+      margin-bottom: 2rem;
+      border-left: 3px solid var(--cyan);
+    }
+
+    /* OPTIONS */
+    .options-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    .option {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      padding: 1.2rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .option:hover {
+      background: rgba(6, 182, 212, 0.08);
+      border-color: var(--cyan);
+      transform: translateX(5px);
+    }
+    .option.selected {
+      background: rgba(6, 182, 212, 0.15);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+    .opt-circle {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--muted);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .option.selected .opt-circle {
+      border-color: var(--cyan);
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    /* FOOTER CONTROLS */
+    .quiz-footer {
+      padding: 1.5rem 2rem;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+    }
+    .next-btn {
+      background: var(--cyan);
+      color: #000;
+      border: none;
+      padding: 0.8rem 2.5rem;
+      border-radius: 8px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .next-btn:hover {
+      background: #0891b2;
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+    }
+
+    /* RESULTS OVERLAY */
+    #results {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      text-align: center;
+    }
+    .score-circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 8px solid var(--cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="quiz-header">
+    <a href="quiz.html" class="back-btn">← Exit Quiz</a>
+    <div class="progress-container">
+      <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.75rem; font-family:'Space Mono'">
+        <span id="q-count">Question 1 of 3</span>
+        <span id="q-percent">33%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-fill" id="p-bar"></div>
+      </div>
+    </div>
+    <div style="font-family:'Space Mono'; color:var(--cyan)">⚡ +50 XP</div>
+  </header>
+
+  <main class="quiz-container">
+    <div class="question-card">
+      <div class="q-meta" id="q-category">HTML & STRUCTURE</div>
+      <div class="q-text" id="q-text">Which HTML tag is used to define the most important heading in a document?</div>
+      
+      <div class="code-snippet" id="q-code" style="display: none;">
+        &lt;!-- Code snippet example --&gt;
+      </div>
+
+      <div class="options-grid" id="options-container">
+        </div>
+    </div>
+  </main>
+
+  <footer class="quiz-footer">
+    <button class="next-btn" onclick="handleNext()">Submit & Next →</button>
+  </footer>
+
+  <div id="results">
+    <div class="score-circle" id="score-display">0%</div>
+    <h1 style="font-family:'Syne'; font-size: 2.5rem; margin-bottom: 1rem;">Quiz Complete!</h1>
+    <p style="color:var(--muted); margin-bottom: 2rem;">You earned 50 XP and increased your HTML rank.</p>
+    <button class="next-btn" onclick="window.location.href='quiz.html'">Return to Dashboard</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        category: "HTML & STRUCTURE",
+        text: "Which HTML tag is used to define the most important heading?",
+        options: ["<heading>", "<h1>", "<h6>", "<head>"],
+        correct: 1
+      },
+      {
+        category: "ATTRIBUTES",
+        text: "Which attribute is used to provide an alternative text for an image if it cannot be displayed?",
+        options: ["title", "src", "alt", "longdesc"],
+        correct: 2
+      },
+      {
+        category: "LINKS",
+        text: "What is the correct syntax for creating a hyperlink?",
+        options: ["<a>http://codelearn.com</a>", "<a name=''>CodeLearn</a>", "<a href='http://codelearn.com'>CodeLearn</a>", "<link url=''>CodeLearn</link>"],
+        correct: 2
+      }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const q = questions[currentQ];
+      document.getElementById('q-category').textContent = q.category;
+      document.getElementById('q-text').textContent = q.text;
+      document.getElementById('q-count').textContent = `Question ${currentQ + 1} of ${questions.length}`;
+      
+      const percent = Math.round(((currentQ + 1) / questions.length) * 100);
+      document.getElementById('p-bar').style.width = percent + '%';
+      document.getElementById('q-percent').textContent = percent + '%';
+
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+      
+      q.options.forEach((opt, idx) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.innerHTML = `<div class="opt-circle"></div> <span>${opt}</span>`;
+        div.onclick = () => selectOption(div, idx);
+        container.appendChild(div);
+      });
+    }
+
+    let selectedIdx = null;
+    function selectOption(el, idx) {
+      document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedIdx = idx;
+    }
+
+    function handleNext() {
+      if (selectedIdx === null) return alert("Please select an answer!");
+      
+      if (selectedIdx === questions[currentQ].correct) {
+        score++;
+      }
+
+      currentQ++;
+      selectedIdx = null;
+
+      if (currentQ < questions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      const finalScore = Math.round((score / questions.length) * 100);
+      document.getElementById('results').style.display = 'flex';
+      document.getElementById('score-display').textContent = finalScore + '%';
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>

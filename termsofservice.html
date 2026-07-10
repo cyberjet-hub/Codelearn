@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terms & Conditions — CodeLearn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --blue: #2563eb;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+      --border-cyan: rgba(6,182,212,0.2);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND ── */
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(37,99,235,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,0.05) 1px, transparent 1px);
+      background-size: 56px 56px;
+      pointer-events: none;
+    }
+    .bg-glow {
+      position: fixed; pointer-events: none; z-index: 0;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(6,182,212,0.06) 0%, transparent 65%);
+      top: -200px; right: -200px;
+    }
+    .bg-glow-bottom {
+      position: fixed; pointer-events: none; z-index: 0;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(37,99,235,0.06) 0%, transparent 65%);
+      bottom: -100px; left: -100px;
+    }
+
+    /* ── PARTICLES ── */
+    .particles { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .particle {
+      position: absolute; width: 2px; height: 2px;
+      background: var(--cyan); border-radius: 50%; opacity: 0;
+      animation: drift linear infinite;
+    }
+    @keyframes drift {
+      0%   { opacity: 0; transform: translateY(100vh) scale(0); }
+      10%  { opacity: .5; }
+      90%  { opacity: .2; }
+      100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(5,13,26,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: .65rem;
+      text-decoration: none;
+    }
+    .nav-logo-mark {
+      width: 36px; height: 36px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(6,182,212,0.2);
+    }
+    .nav-logo-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem; font-weight: 800;
+      color: var(--cyan);
+    }
+    .nav-logo-name span { color: var(--green); }
+    .nav-back {
+      display: flex; align-items: center; gap: .4rem;
+      color: var(--muted); font-size: .83rem;
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      transition: color .2s;
+    }
+    .nav-back:hover { color: var(--cyan); }
+
+    /* ── LAYOUT ── */
+    .page-wrapper {
+      position: relative; z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3.5rem 2rem 6rem;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    @media (max-width: 800px) {
+      .page-wrapper { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 1.25rem 4rem; }
+      .sidebar { display: none; }
+    }
+
+    /* ── SIDEBAR (TOC) ── */
+    .sidebar {
+      position: sticky; top: 88px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      animation: fadeIn .6s ease both;
+    }
+    .sidebar-title {
+      font-family: 'Space Mono', monospace;
+      font-size: .72rem; font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      padding-bottom: .75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .toc-list { list-style: none; display: flex; flex-direction: column; gap: .25rem; }
+    .toc-list a {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .5rem .65rem;
+      border-radius: 7px;
+      color: var(--muted);
+      font-size: .82rem;
+      text-decoration: none;
+      transition: all .2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .toc-list a:hover, .toc-list a.active {
+      color: var(--cyan);
+      background: rgba(6,182,212,0.07);
+    }
+    .toc-num {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--border);
+      min-width: 18px;
+    }
+    .toc-list a.active .toc-num { color: var(--cyan); }
+
+    .sidebar-meta {
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: .75rem;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      line-height: 1.7;
+    }
+    .sidebar-meta span { color: var(--cyan); }
+
+    /* ── MAIN CONTENT ── */
+    .main-content { animation: slideUp .5s ease both; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      margin-bottom: 2.5rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .45rem;
+      background: rgba(6,182,212,0.08);
+      border: 1px solid var(--border-cyan);
+      border-radius: 20px;
+      padding: .35rem .9rem;
+      font-size: .75rem;
+      font-family: 'Space Mono', monospace;
+      color: var(--cyan);
+      margin-bottom: 1.25rem;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--cyan);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(.7); }
+    }
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: .75rem;
+    }
+    .hero h1 .accent { color: var(--cyan); }
+    .hero-sub {
+      color: var(--muted); font-size: .95rem; line-height: 1.7;
+      max-width: 560px;
+    }
+    .hero-meta {
+      display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap;
+    }
+    .meta-chip {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .78rem; color: var(--muted);
+      font-family: 'Space Mono', monospace;
+    }
+    .meta-chip-icon { font-size: .9rem; }
+
+    /* ── ALERT BOX ── */
+    .alert {
+      display: flex; gap: .85rem;
+      background: rgba(245,158,11,0.07);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 12px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      align-items: flex-start;
+    }
+    .alert-icon { font-size: 1.1rem; margin-top: .1rem; }
+    .alert-text { font-size: .85rem; color: #fcd34d; line-height: 1.65; }
+    .alert-text strong { font-weight: 600; }
+
+    /* ── SECTION ── */
+    .section {
+      margin-bottom: 3rem;
+      scroll-margin-top: 96px;
+    }
+    .section-header {
+      display: flex; align-items: center; gap: .85rem;
+      margin-bottom: 1.25rem;
+    }
+    .section-num {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--cyan);
+      background: rgba(6,182,212,0.08);
+      border: 1px solid var(--border-cyan);
+      border-radius: 6px;
+      padding: .2rem .5rem;
+      white-space: nowrap;
+    }
+    .section h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--text);
+    }
+    .section p {
+      color: #b0c4de;
+      font-size: .9rem;
+      line-height: 1.8;
+      margin-bottom: .85rem;
+    }
+    .section p:last-child { margin-bottom: 0; }
+    .section ul, .section ol {
+      padding-left: 1.25rem;
+      margin-bottom: .85rem;
+    }
+    .section li {
+      color: #b0c4de;
+      font-size: .9rem;
+      line-height: 1.8;
+      margin-bottom: .3rem;
+    }
+    .section li::marker { color: var(--cyan); }
+
+    /* ── HIGHLIGHT CARDS ── */
+    .highlight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.25rem 0;
+    }
+    .highlight-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem;
+      transition: border-color .2s;
+    }
+    .highlight-card:hover { border-color: var(--border-cyan); }
+    .highlight-card-icon { font-size: 1.4rem; margin-bottom: .5rem; }
+    .highlight-card-title {
+      font-size: .82rem; font-weight: 600;
+      color: var(--text); margin-bottom: .3rem;
+      font-family: 'Syne', sans-serif;
+    }
+    .highlight-card-text { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── INLINE CODE ── */
+    code {
+      font-family: 'Space Mono', monospace;
+      font-size: .82rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: .1rem .4rem;
+      color: var(--cyan);
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 2.5rem 0;
+    }
+
+    /* ── CONTACT CARD ── */
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border-cyan);
+      border-radius: 16px;
+      padding: 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1.5rem; flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    .contact-card-left h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      color: var(--text); margin-bottom: .35rem;
+    }
+    .contact-card-left p { font-size: .85rem; color: var(--muted); }
+    .contact-btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .7rem 1.5rem;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      border: none; border-radius: 9px;
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: .9rem; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: all .2s;
+    }
+    .contact-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(6,182,212,0.25); }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: .95rem; font-weight: 800;
+      color: var(--cyan);
+    }
+    .footer-logo span { color: var(--green); }
+    .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-links a {
+      font-size: .8rem; color: var(--muted);
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--cyan); }
+    .footer-copy {
+      font-size: .78rem; color: var(--muted);
+      font-family: 'Space Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+<div class="bg-glow-bottom"></div>
+<div class="particles" id="particles"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="home.html" class="nav-logo">
+    <div class="nav-logo-mark">🚀</div>
+    <div class="nav-logo-name">Code<span>Learn</span></div>
+  </a>
+  <a href="javascript:history.back()" class="nav-back">← Back</a>
+</nav>
+
+<!-- ── PAGE ── -->
+<div class="page-wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">// Table of Contents</div>
+    <ul class="toc-list" id="toc">
+      <li><a href="#acceptance" class="active"><span class="toc-num">01</span> Acceptance of Terms</a></li>
+      <li><a href="#eligibility"><span class="toc-num">02</span> Eligibility</a></li>
+      <li><a href="#accounts"><span class="toc-num">03</span> User Accounts</a></li>
+      <li><a href="#content"><span class="toc-num">04</span> Content & Conduct</a></li>
+      <li><a href="#intellectual"><span class="toc-num">05</span> Intellectual Property</a></li>
+      <li><a href="#payments"><span class="toc-num">06</span> Payments & Refunds</a></li>
+      <li><a href="#privacy"><span class="toc-num">07</span> Privacy & Data</a></li>
+      <li><a href="#disclaimer"><span class="toc-num">08</span> Disclaimer</a></li>
+      <li><a href="#termination"><span class="toc-num">09</span> Termination</a></li>
+      <li><a href="#changes"><span class="toc-num">10</span> Changes to Terms</a></li>
+      <li><a href="#contact"><span class="toc-num">11</span> Contact Us</a></li>
+    </ul>
+    <div class="sidebar-meta">
+      Last updated<br/>
+      <span>January 1, 2025</span><br/><br/>
+      Version <span>2.1.0</span>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        Legal Document
+      </div>
+      <h1>Terms &amp; <span class="accent">Conditions</span></h1>
+      <p class="hero-sub">
+        Please read these terms carefully before using CodeLearn. By accessing or using our platform,
+        you agree to be bound by the following terms and conditions.
+      </p>
+      <div class="hero-meta">
+        <div class="meta-chip"><span class="meta-chip-icon">📅</span> Effective: January 1, 2025</div>
+        <div class="meta-chip"><span class="meta-chip-icon">📍</span> Governing Law: Uganda</div>
+        <div class="meta-chip"><span class="meta-chip-icon">🔖</span> Version 2.1.0</div>
+      </div>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert">
+      <span class="alert-icon">⚠️</span>
+      <p class="alert-text">
+        <strong>Important:</strong> These Terms constitute a legally binding agreement between you and CodeLearn.
+        If you do not agree to these terms, please do not use our platform.
+      </p>
+    </div>
+
+    <!-- 01 -->
+    <section class="section" id="acceptance">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>Acceptance of Terms</h2>
+      </div>
+      <p>
+        By accessing, browsing, or using the CodeLearn platform — including our website, mobile applications,
+        and any related services (collectively, the "Platform") — you confirm that you have read, understood,
+        and agree to be bound by these Terms and Conditions ("Terms") and our Privacy Policy.
+      </p>
+      <p>
+        These Terms apply to all visitors, registered users, students, teachers, and any other parties who
+        interact with the Platform. Your continued use of CodeLearn constitutes your ongoing acceptance of
+        any updates or revisions to these Terms.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 02 -->
+    <section class="section" id="eligibility">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>Eligibility</h2>
+      </div>
+      <p>To use CodeLearn, you must meet the following eligibility requirements:</p>
+      <div class="highlight-grid">
+        <div class="highlight-card">
+          <div class="highlight-card-icon">🎂</div>
+          <div class="highlight-card-title">Age Requirement</div>
+          <div class="highlight-card-text">You must be at least 13 years old. Users under 18 require parental or guardian consent.</div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-card-icon">✅</div>
+          <div class="highlight-card-title">Legal Capacity</div>
+          <div class="highlight-card-text">You must have the legal capacity to enter into a binding agreement in your jurisdiction.</div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-card-icon">🚫</div>
+          <div class="highlight-card-title">No Prior Bans</div>
+          <div class="highlight-card-text">You must not have been previously suspended or removed from the CodeLearn platform.</div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-card-icon">🌍</div>
+          <div class="highlight-card-title">Compliance</div>
+          <div class="highlight-card-text">Use of the Platform must not violate any applicable local, national, or international laws.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 03 -->
+    <section class="section" id="accounts">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>User Accounts</h2>
+      </div>
+      <p>
+        When you create an account on CodeLearn, you are responsible for maintaining the confidentiality
+        of your login credentials and for all activities that occur under your account.
+      </p>
+      <ul>
+        <li>You must provide accurate, current, and complete information during registration.</li>
+        <li>You are responsible for updating your information to keep it accurate and current.</li>
+        <li>You must immediately notify us of any unauthorized use of your account at <code>security@codelearn.io</code>.</li>
+        <li>You may not share your account credentials with any third party.</li>
+        <li>Each person may only maintain one active account unless explicitly permitted by CodeLearn.</li>
+        <li>CodeLearn reserves the right to suspend or terminate accounts that violate these Terms.</li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 04 -->
+    <section class="section" id="content">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>Content &amp; Conduct</h2>
+      </div>
+      <p>
+        CodeLearn is an educational platform designed to foster learning, collaboration, and skill development.
+        All users — students and teachers alike — are expected to conduct themselves respectfully and responsibly.
+      </p>
+      <p><strong style="color: var(--text);">You agree NOT to:</strong></p>
+      <ul>
+        <li>Post, upload, or share content that is harmful, offensive, abusive, or discriminatory.</li>
+        <li>Engage in academic dishonesty, plagiarism, or misrepresentation of your work.</li>
+        <li>Attempt to access, hack, or disrupt any part of the Platform or its infrastructure.</li>
+        <li>Use the Platform to send spam, phishing messages, or unsolicited commercial communications.</li>
+        <li>Collect or harvest other users' personal information without their explicit consent.</li>
+        <li>Impersonate any person, entity, or CodeLearn staff member.</li>
+        <li>Upload or distribute malicious code, viruses, or any software intended to harm.</li>
+        <li>Use automated bots or scripts to access the Platform without prior written permission.</li>
+      </ul>
+      <p>
+        CodeLearn reserves the right to remove any content and suspend any user that violates these guidelines,
+        without prior notice and at our sole discretion.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 05 -->
+    <section class="section" id="intellectual">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2>Intellectual Property</h2>
+      </div>
+      <p>
+        All content on the CodeLearn Platform — including but not limited to course materials, videos, code
+        challenges, assessments, graphics, logos, and software — is the intellectual property of CodeLearn
+        or its licensed content creators, and is protected by applicable copyright and intellectual property laws.
+      </p>
+      <p>
+        <strong style="color: var(--text);">What you may do:</strong> Access and use Platform content solely
+        for your personal, non-commercial educational purposes.
+      </p>
+      <p>
+        <strong style="color: var(--text);">What you may NOT do:</strong> Reproduce, redistribute, sell,
+        sublicense, modify, or create derivative works from any Platform content without explicit written
+        permission from CodeLearn.
+      </p>
+      <p>
+        Content you create and submit on the Platform (e.g., code projects, forum posts) remains your property.
+        However, by submitting content, you grant CodeLearn a non-exclusive, royalty-free, worldwide licence
+        to display, distribute, and use your content in connection with operating and improving the Platform.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 06 -->
+    <section class="section" id="payments">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2>Payments &amp; Refunds</h2>
+      </div>
+      <p>
+        CodeLearn offers both free and premium subscription plans. By purchasing a paid plan, you agree to
+        the following payment terms:
+      </p>
+      <ul>
+        <li>All fees are quoted in the currency specified at checkout and are inclusive of applicable taxes.</li>
+        <li>Subscription fees are billed in advance on a monthly or annual basis, depending on your chosen plan.</li>
+        <li>You authorise CodeLearn to charge your designated payment method automatically at each renewal period.</li>
+        <li>You may cancel your subscription at any time; cancellation takes effect at the end of the current billing period.</li>
+        <li>Refunds may be requested within <strong style="color: var(--cyan);">7 days</strong> of purchase if you have not accessed more than 20% of the paid course content.</li>
+        <li>CodeLearn reserves the right to modify pricing with at least 30 days' prior notice to existing subscribers.</li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 07 -->
+    <section class="section" id="privacy">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2>Privacy &amp; Data</h2>
+      </div>
+      <p>
+        Your privacy is important to us. Our collection, use, and protection of your personal data is governed
+        by our <a href="privacy.html" style="color: var(--cyan); text-decoration: none; font-weight: 500;">Privacy Policy</a>,
+        which is incorporated into these Terms by reference.
+      </p>
+      <p>
+        By using CodeLearn, you consent to the collection and processing of your data as described in our
+        Privacy Policy. Key points include:
+      </p>
+      <ul>
+        <li>We collect data necessary to provide and improve our educational services.</li>
+        <li>We do not sell your personal data to third parties.</li>
+        <li>We use industry-standard security measures to protect your information.</li>
+        <li>You have the right to access, correct, or request deletion of your personal data.</li>
+        <li>For users under 18, we take additional steps to protect minors' data in accordance with applicable law.</li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 08 -->
+    <section class="section" id="disclaimer">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <h2>Disclaimer &amp; Limitation of Liability</h2>
+      </div>
+      <p>
+        CodeLearn provides its Platform on an <strong style="color: var(--text);">"as is" and "as available"</strong> basis.
+        While we strive to ensure the accuracy and quality of our content, we make no warranties — express or implied —
+        regarding the completeness, reliability, or fitness for a particular purpose of any content or service.
+      </p>
+      <p>
+        To the fullest extent permitted by law, CodeLearn and its officers, directors, employees, and partners
+        shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising
+        from your use of, or inability to use, the Platform — including but not limited to loss of data,
+        revenue, or business opportunities.
+      </p>
+      <p>
+        CodeLearn's total liability to you for any claim arising out of these Terms or your use of the Platform
+        shall not exceed the amount you paid to CodeLearn in the 12 months preceding the claim.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 09 -->
+    <section class="section" id="termination">
+      <div class="section-header">
+        <span class="section-num">09</span>
+        <h2>Termination</h2>
+      </div>
+      <p>
+        Either party may terminate this agreement at any time. You may close your account by contacting our
+        support team or through your account settings. CodeLearn may suspend or terminate your access to the
+        Platform immediately and without prior notice if:
+      </p>
+      <ul>
+        <li>You breach any provision of these Terms.</li>
+        <li>Your conduct is determined to be harmful to other users, the Platform, or CodeLearn.</li>
+        <li>We are required to do so by law or a regulatory authority.</li>
+        <li>We decide to discontinue the Platform or certain features.</li>
+      </ul>
+      <p>
+        Upon termination, your right to access the Platform ceases immediately. Provisions of these Terms
+        that by their nature should survive termination (including intellectual property rights, disclaimers,
+        and limitations of liability) shall remain in effect.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 10 -->
+    <section class="section" id="changes">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <h2>Changes to Terms</h2>
+      </div>
+      <p>
+        CodeLearn reserves the right to modify these Terms at any time. When we make material changes, we will:
+      </p>
+      <ul>
+        <li>Update the "Last Updated" date at the top of this page.</li>
+        <li>Send a notification to your registered email address at least 14 days before changes take effect.</li>
+        <li>Display a prominent notice on the Platform.</li>
+      </ul>
+      <p>
+        Your continued use of CodeLearn after the effective date of any changes constitutes your acceptance
+        of the revised Terms. If you do not agree with the updated Terms, you must stop using the Platform
+        and may close your account.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 11 -->
+    <section class="section" id="contact">
+      <div class="section-header">
+        <span class="section-num">11</span>
+        <h2>Contact Us</h2>
+      </div>
+      <p>
+        If you have any questions, concerns, or requests regarding these Terms and Conditions, please don't
+        hesitate to get in touch with our team. We aim to respond to all enquiries within 2 business days.
+      </p>
+      <div class="contact-card">
+        <div class="contact-card-left">
+          <h3>Have a question about our terms?</h3>
+          <p>Our legal team is happy to help clarify anything.</p>
+        </div>
+        <a href="cyberjet9991@gmail.com" class="contact-btn">
+          ✉️ legal@codelearn.io
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">Code<span>Learn</span></div>
+  <nav class="footer-links">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="termsofservice.html">Terms</a>
+    <a href="home2.html">Home</a>
+    <a href="cyberjet9991@gmail.com">Support</a>
+  </nav>
+  <div class="footer-copy">© 2025 CodeLearn. All rights reserved.</div>
+</footer>
+
+<script>
+  // Particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      width: ${Math.random() > .5 ? 2 : 3}px;
+      height: ${Math.random() > .5 ? 2 : 3}px;
+      animation-duration: ${7 + Math.random() * 10}s;
+      animation-delay: ${Math.random() * 10}s;
+    `;
+    container.appendChild(p);
+  }
+
+  // Active TOC on scroll
+  const sections = document.querySelectorAll('.section');
+  const tocLinks = document.querySelectorAll('.toc-list a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`.toc-list a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

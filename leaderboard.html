@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Leaderboard — CodeLearn</title>
+  <link rel="icon" type="image/png" href="main ico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --blue: #2563eb;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --purple: #7c3aed;
+      --red: #ef4444;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+      --sidebar-w: 240px;
+      --gold: #f59e0b;
+      --silver: #94a3b8;
+      --bronze: #b45309;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-w); min-height: 100vh;
+      background: var(--surface); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      padding: 1.5rem 1rem;
+      position: fixed; left: 0; top: 0; bottom: 0; z-index: 50;
+    }
+    .sidebar-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--cyan); padding: .25rem .75rem 1.75rem; }
+    .sidebar-logo span { color: var(--green); }
+    .sidebar-section { font-family: 'Space Mono', monospace; font-size: .63rem; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; padding: .5rem .75rem .4rem; margin-top: .5rem; }
+    .nav-item { display: flex; align-items: center; gap: .75rem; padding: .65rem .75rem; border-radius: 9px; color: var(--muted); font-size: .88rem; font-weight: 500; cursor: pointer; transition: all .2s; text-decoration: none; margin-bottom: 2px; border: 1px solid transparent; }
+    .nav-item:hover { background: rgba(6,182,212,0.07); color: var(--text); }
+    .nav-item.active { background: rgba(6,182,212,0.12); color: var(--cyan); border-color: rgba(6,182,212,0.2); }
+    .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--cyan); color: #000; font-size: .62rem; font-weight: 700; padding: 1px 6px; border-radius: 100px; font-family: 'Space Mono', monospace; }
+    .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 1rem; }
+    .user-chip { display: flex; align-items: center; gap: .75rem; padding: .65rem .75rem; border-radius: 9px; cursor: pointer; transition: background .2s; }
+    .user-chip:hover { background: rgba(255,255,255,0.04); }
+    .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--green), var(--cyan)); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: .85rem; color: #000; flex-shrink: 0; }
+    .user-info-name { font-size: .85rem; font-weight: 600; color: var(--text); }
+    .user-info-role { font-size: .72rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+    /* MAIN */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+
+    /* TOPBAR */
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 2rem; border-bottom: 1px solid var(--border); background: rgba(5,13,26,0.8); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 40; }
+    .topbar-left h1 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; }
+    .topbar-left p { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    .topbar-right { display: flex; align-items: center; gap: .75rem; }
+    .chip { display: flex; align-items: center; gap: .4rem; border-radius: 100px; padding: .32rem .85rem; font-size: .78rem; font-family: 'Space Mono', monospace; }
+    .chip-yellow { background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.25); color: var(--yellow); }
+    .chip-cyan   { background: rgba(6,182,212,0.1);  border: 1px solid rgba(6,182,212,0.25);  color: var(--cyan); }
+    .notif-btn { width: 36px; height: 36px; border-radius: 8px; background: var(--card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; transition: border-color .2s; position: relative; }
+    .notif-btn:hover { border-color: var(--cyan); }
+    .notif-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; background: var(--red); border-radius: 50%; border: 1.5px solid var(--bg); }
+
+    /* CONTENT */
+    .content { padding: 2rem; flex: 1; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes growBar { from{width:0} }
+    @keyframes popIn { from{opacity:0;transform:scale(.8)} to{opacity:1;transform:scale(1)} }
+
+    /* PODIUM */
+    .podium-section {
+      display: flex; justify-content: center; align-items: flex-end;
+      gap: 1.25rem; margin-bottom: 2.5rem;
+      animation: fadeUp .5s ease both;
+    }
+    .podium-card {
+      display: flex; flex-direction: column; align-items: center;
+      gap: .6rem; flex: 1; max-width: 200px;
+    }
+    .podium-avatar-wrap { position: relative; }
+    .podium-avatar {
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; color: #000;
+      animation: popIn .5s ease both;
+    }
+    .podium-card.p1 .podium-avatar { width: 72px; height: 72px; font-size: 1.6rem; border: 3px solid var(--gold); box-shadow: 0 0 24px rgba(245,158,11,0.35); animation-delay: .1s; }
+    .podium-card.p2 .podium-avatar { width: 58px; height: 58px; font-size: 1.3rem; border: 3px solid var(--silver); box-shadow: 0 0 14px rgba(148,163,184,0.2); animation-delay: .2s; }
+    .podium-card.p3 .podium-avatar { width: 52px; height: 52px; font-size: 1.1rem; border: 3px solid var(--bronze); box-shadow: 0 0 12px rgba(180,83,9,0.2); animation-delay: .3s; }
+    .podium-crown {
+      position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+      font-size: 1.3rem; line-height: 1;
+    }
+    .podium-rank-badge {
+      position: absolute; bottom: -4px; right: -4px;
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: .7rem;
+      border: 2px solid var(--bg);
+    }
+    .p1 .podium-rank-badge { background: var(--gold); color: #000; }
+    .p2 .podium-rank-badge { background: var(--silver); color: #000; }
+    .p3 .podium-rank-badge { background: var(--bronze); color: #fff; }
+    .podium-name {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      text-align: center; line-height: 1.2;
+    }
+    .p1 .podium-name { font-size: 1rem; }
+    .p2 .podium-name, .p3 .podium-name { font-size: .88rem; color: var(--muted); }
+    .podium-xp {
+      font-family: 'Space Mono', monospace; font-size: .75rem;
+      text-align: center;
+    }
+    .p1 .podium-xp { color: var(--gold); }
+    .p2 .podium-xp { color: var(--silver); }
+    .p3 .podium-xp { color: var(--bronze); }
+    .podium-block {
+      width: 100%; border-radius: 12px 12px 0 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .p1 .podium-block { height: 80px; background: linear-gradient(180deg, rgba(245,158,11,0.18), rgba(245,158,11,0.06)); border: 1px solid rgba(245,158,11,0.25); border-bottom: none; }
+    .p2 .podium-block { height: 60px; background: linear-gradient(180deg, rgba(148,163,184,0.12), rgba(148,163,184,0.04)); border: 1px solid rgba(148,163,184,0.2); border-bottom: none; }
+    .p3 .podium-block { height: 46px; background: linear-gradient(180deg, rgba(180,83,9,0.12), rgba(180,83,9,0.04)); border: 1px solid rgba(180,83,9,0.2); border-bottom: none; }
+    .block-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.6rem; opacity: .25; }
+
+    /* FILTER TABS */
+    .filter-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem;
+      animation: fadeUp .45s .1s ease both;
+    }
+    .tabs { display: flex; gap: .5rem; }
+    .tab {
+      padding: .42rem 1.1rem; border-radius: 100px;
+      font-family: 'Space Mono', monospace; font-size: .75rem;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); cursor: pointer; transition: all .2s;
+    }
+    .tab:hover { color: var(--text); border-color: rgba(6,182,212,0.3); }
+    .tab.active { background: rgba(6,182,212,0.12); border-color: rgba(6,182,212,0.3); color: var(--cyan); }
+    .search-box {
+      display: flex; align-items: center; gap: .5rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 9px; padding: .45rem .9rem;
+      transition: border-color .2s;
+    }
+    .search-box:focus-within { border-color: rgba(6,182,212,0.4); }
+    .search-box input {
+      background: none; border: none; outline: none;
+      color: var(--text); font-family: 'Inter', sans-serif;
+      font-size: .83rem; width: 160px;
+    }
+    .search-box input::placeholder { color: var(--muted); }
+
+    /* LEADERBOARD TABLE */
+    .lb-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      animation: fadeUp .5s .15s ease both;
+    }
+    .lb-header {
+      display: grid; grid-template-columns: 52px 1fr 100px 100px 80px;
+      padding: .75rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .8px;
+    }
+    .lb-row {
+      display: grid; grid-template-columns: 52px 1fr 100px 100px 80px;
+      padding: .85rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      transition: background .15s;
+      animation: fadeUp .4s ease both;
+    }
+    .lb-row:last-child { border-bottom: none; }
+    .lb-row:hover { background: rgba(6,182,212,0.04); }
+    .lb-row.is-me {
+      background: rgba(6,182,212,0.07);
+      border-left: 3px solid var(--cyan);
+    }
+    .lb-row.is-me:hover { background: rgba(6,182,212,0.1); }
+
+    /* RANK */
+    .rank-num {
+      font-family: 'Space Mono', monospace;
+      font-size: .85rem; font-weight: 700;
+      color: var(--muted); text-align: center;
+    }
+    .rank-gold   { color: var(--gold); }
+    .rank-silver { color: var(--silver); }
+    .rank-bronze { color: var(--bronze); }
+    .rank-me     { color: var(--cyan); }
+
+    /* PLAYER */
+    .player-cell { display: flex; align-items: center; gap: .85rem; }
+    .player-av {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: .9rem; color: #000; flex-shrink: 0;
+    }
+    .player-name { font-weight: 600; font-size: .88rem; }
+    .player-handle { font-size: .72rem; color: var(--muted); font-family: 'Space Mono', monospace; margin-top: 1px; }
+    .me-badge {
+      display: inline-block;
+      background: rgba(6,182,212,0.15); color: var(--cyan);
+      font-family: 'Space Mono', monospace; font-size: .6rem;
+      padding: 1px 6px; border-radius: 100px;
+      border: 1px solid rgba(6,182,212,0.3);
+      margin-left: .45rem; vertical-align: middle;
+    }
+
+    /* XP COL */
+    .xp-col {
+      font-family: 'Space Mono', monospace;
+      font-size: .82rem; font-weight: 700;
+    }
+    .xp-col.gold   { color: var(--gold); }
+    .xp-col.silver { color: var(--silver); }
+    .xp-col.bronze { color: var(--bronze); }
+    .xp-col.me     { color: var(--cyan); }
+    .xp-col.normal { color: var(--text); }
+
+    /* STREAK COL */
+    .streak-col { font-size: .82rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+    .streak-hot { color: var(--yellow); }
+
+    /* LEVEL COL */
+    .level-pill {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-family: 'Space Mono', monospace; font-size: .68rem;
+      padding: .22rem .6rem; border-radius: 100px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--muted);
+    }
+
+    /* MY RANK BANNER */
+    .my-rank-banner {
+      background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(37,99,235,0.08));
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 14px; padding: 1.2rem 1.5rem;
+      display: flex; align-items: center; gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      animation: fadeUp .4s ease both;
+      position: relative; overflow: hidden;
+    }
+    .my-rank-banner::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px);
+      background-size: 28px 28px; pointer-events: none;
+    }
+    .mrb-rank {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 2.4rem; color: var(--cyan);
+      line-height: 1; position: relative; z-index: 1;
+    }
+    .mrb-rank span { font-size: 1rem; color: var(--muted); }
+    .mrb-info { flex: 1; position: relative; z-index: 1; }
+    .mrb-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .97rem; margin-bottom: .2rem; }
+    .mrb-sub { font-size: .8rem; color: var(--muted); }
+    .mrb-stats { display: flex; gap: 1.5rem; position: relative; z-index: 1; }
+    .mrb-stat { text-align: center; }
+    .mrb-stat-val { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; }
+    .mrb-stat-lbl { font-size: .68rem; color: var(--muted); font-family: 'Space Mono', monospace; margin-top: 2px; }
+
+    /* XP TO NEXT */
+    .gap-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.1rem 1.25rem;
+      margin-top: 1.25rem;
+      animation: fadeUp .5s .25s ease both;
+    }
+    .gap-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; }
+    .gap-label { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--muted); }
+    .gap-val { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--cyan); }
+    .gap-bar { height: 6px; background: var(--border); border-radius: 6px; overflow: hidden; }
+    .gap-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg,var(--cyan),var(--blue)); animation: growBar .9s .4s ease both; }
+
+    @media(max-width:900px){ .lb-header,.lb-row{grid-template-columns:44px 1fr 90px 70px} .lb-header .col-level,.lb-row .col-level{display:none} }
+    @media(max-width:768px){ .sidebar{transform:translateX(-100%)} .main{margin-left:0} .podium-section{gap:.75rem} }
+    @media(max-width:600px){ .lb-header,.lb-row{grid-template-columns:40px 1fr 80px} .lb-header .col-streak,.lb-row .col-streak{display:none} .content{padding:1rem} .topbar{padding:1rem} .mrb-stats{gap:.75rem} }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Code<span>Learn</span></div>
+  <div class="sidebar-section">// Main</div>
+  <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+  <a class="nav-item" href="modules.html"><span class="nav-icon">📚</span> Modules<span class="nav-badge">5</span></a>
+  <a class="nav-item" href="quiz.html"><span class="nav-icon">🧪</span> Quizzes<span class="nav-badge">2</span></a>
+  <a class="nav-item active" href="leaderboard.html"><span class="nav-icon">🏆</span> Leaderboard</a>
+  <div class="sidebar-section">// Account</div>
+  <a class="nav-item" href="profile.html"><span class="nav-icon">👤</span> Profile</a>
+  <a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span> Settings</a>
+  <a class="nav-item" href="home2.html"><span class="nav-icon">🌐</span> Back to home</a>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar" id="sidebarInitial">S</div>
+      <div>
+        <div class="user-info-name" id="sidebarName">Student</div>
+        <div class="user-info-role">// student</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Leaderboard</h1>
+      <p>Top learners on CodeLearn this week</p>
+    </div>
+    <div class="topbar-right">
+      <div class="chip chip-yellow">🔥 7-day streak</div>
+      <div class="chip chip-cyan">⚡ 1,340 XP</div>
+      <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- MY RANK BANNER -->
+    <div class="my-rank-banner">
+      <div class="mrb-rank" id="myRankNum">#7 <span>/ 24</span></div>
+      <div class="mrb-info">
+        <div class="mrb-title">Your Current Rank — <span style="color:var(--cyan)" id="myRankName">Student</span></div>
+        <div class="mrb-sub">You're in the <strong style="color:var(--yellow)">Top 30%</strong> — keep going to crack the Top 10! 🚀</div>
+      </div>
+      <div class="mrb-stats">
+        <div class="mrb-stat">
+          <div class="mrb-stat-val" style="color:var(--cyan)">1,340</div>
+          <div class="mrb-stat-lbl">Total XP</div>
+        </div>
+        <div class="mrb-stat">
+          <div class="mrb-stat-val" style="color:var(--yellow)">🔥 7</div>
+          <div class="mrb-stat-lbl">Streak</div>
+        </div>
+        <div class="mrb-stat">
+          <div class="mrb-stat-val" style="color:var(--green)">84%</div>
+          <div class="mrb-stat-lbl">Avg Score</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PODIUM (top 3) -->
+    <div class="podium-section" id="podiumSection">
+      <!-- built by JS -->
+    </div>
+
+    <!-- FILTER -->
+    <div class="filter-row">
+      <div class="tabs">
+        <button class="tab active" onclick="setFilter('weekly',this)">Weekly</button>
+        <button class="tab" onclick="setFilter('alltime',this)">All Time</button>
+        <button class="tab" onclick="setFilter('module',this)">By Module</button>
+      </div>
+      <div class="search-box">
+        <span style="color:var(--muted);font-size:.9rem">🔍</span>
+        <input type="text" placeholder="Search student..." oninput="filterSearch(this.value)" id="searchInput"/>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="lb-card">
+      <div class="lb-header">
+        <div style="text-align:center">#</div>
+        <div>Student</div>
+        <div>XP</div>
+        <div class="col-streak">Streak</div>
+        <div class="col-level">Level</div>
+      </div>
+      <div id="lbBody">
+        <!-- rows built by JS -->
+      </div>
+    </div>
+
+    <!-- XP GAP TO NEXT -->
+    <div class="gap-card" id="gapCard">
+      <div class="gap-head">
+        <span class="gap-label">// XP to overtake <span id="gapTarget">#6</span></span>
+        <span class="gap-val" id="gapAmt">+260 XP needed</span>
+      </div>
+      <div class="gap-bar"><div class="gap-fill" id="gapFill" style="width:0%"></div></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Student data
+  const AVATARS = [
+    'linear-gradient(135deg,#06b6d4,#2563eb)',
+    'linear-gradient(135deg,#22c55e,#06b6d4)',
+    'linear-gradient(135deg,#7c3aed,#2563eb)',
+    'linear-gradient(135deg,#f59e0b,#ef4444)',
+    'linear-gradient(135deg,#ec4899,#7c3aed)',
+    'linear-gradient(135deg,#10b981,#2563eb)',
+    'linear-gradient(135deg,#f97316,#eab308)',
+    'linear-gradient(135deg,#06b6d4,#22c55e)',
+  ];
+
+  const ALL_STUDENTS = [
+    { name: 'kazike Mike',      handle: 'KAZIK_01',   xp: 4850, streak: 21, level: 9,  av: AVATARS[4] },
+    { name: 'Nandala Martha',     handle: 'nandala_M',    xp: 4210, streak: 14, level: 8,  av: AVATARS[2] },
+    { name: 'barack obama',      handle: 'bamzy',  xp: 3980, streak: 19, level: 8,  av: AVATARS[5] },
+    { name: 'Kaligo john',    handle: 'kaligo_j',   xp: 3540, streak: 9,  level: 7,  av: AVATARS[0] },
+    { name: 'Theo Kahwa',   handle: 'theo_k',    xp: 3200, streak: 12, level: 7,  av: AVATARS[6] },
+    { name: 'Priya mbabali',    handle: 'priya_m',   xp: 1600, streak: 5,  level: 5,  av: AVATARS[3] },
+    { name: 'Kopio Zion',             handle: 'k_zion',          xp: 1340, streak: 7,  level: 5,  av: 'linear-gradient(135deg,#22c55e,#06b6d4)', isMe: true },
+    { name: 'Kwame Eliza',    handle: 'kwame_E',   xp: 1100, streak: 3,  level: 4,  av: AVATARS[1] },
+    { name: 'Luciano Mamok',  handle: 'lucia_M',   xp:  980, streak: 2,  level: 4,  av: AVATARS[7] },
+    { name: 'Sam Okiror',      handle: 'sam_o',     xp:  820, streak: 4,  level: 3,  av: AVATARS[5] },
+    { name: 'Emi Nandango',    handle: 'emi_n',     xp:  750, streak: 1,  level: 3,  av: AVATARS[2] },
+    { name: 'Asumpta Nandiga',     handle: 'asum_nan',  xp:  680, streak: 0,  level: 3,  av: AVATARS[6] },
+    { name: 'Sentamu Kyagulani',      handle: 'sents_K',    xp:  520, streak: 2,  level: 2,  av: AVATARS[4] },
+    { name: 'Sarah Ndagano',     handle: 'Zarah_N',   xp:  440, streak: 1,  level: 2,  av: AVATARS[0] },
+    { name: 'Nia Assimwe',    handle: 'nia_A',     xp:  310, streak: 0,  level: 1,  av: AVATARS[3] },
+  ];
+
+  let currentFilter = 'weekly';
+  let currentSearch = '';
+
+  // Load user name
+  try {
+    const saved = localStorage.getItem('cl_user');
+    if (saved) {
+      const u = JSON.parse(saved);
+      const first = u.firstName || 'Student';
+      const last  = u.lastName  || '';
+      const full  = first + (last ? ' ' + last : '');
+      const me = ALL_STUDENTS.find(s => s.isMe);
+      if (me) { me.name = full; me.handle = '@' + first.toLowerCase(); }
+      document.getElementById('myRankName').textContent  = full;
+      document.getElementById('sidebarName').textContent  = full;
+      document.getElementById('sidebarInitial').textContent = first.charAt(0).toUpperCase();
+      const meAvWrapper = document.getElementById('sidebarInitial');
+      if(meAvWrapper) meAvWrapper.textContent = first.charAt(0).toUpperCase();
+    }
+  } catch(e){}
+
+  function rankColor(i) {
+    if (i === 0) return 'rank-gold';
+    if (i === 1) return 'rank-silver';
+    if (i === 2) return 'rank-bronze';
+    return '';
+  }
+  function xpClass(i, isMe) {
+    if (isMe) return 'me';
+    if (i === 0) return 'gold';
+    if (i === 1) return 'silver';
+    if (i === 2) return 'bronze';
+    return 'normal';
+  }
+  function rankEmoji(i) {
+    if (i === 0) return '🥇';
+    if (i === 1) return '🥈';
+    if (i === 2) return '🥉';
+    return i + 1;
+  }
+
+  function buildPodium(students) {
+    const top3 = students.slice(0, 3);
+    // Arrange: 2nd, 1st, 3rd
+    const order = [top3[1], top3[0], top3[2]];
+    const classes = ['p2','p1','p3'];
+    const blockNums = ['2','1','3'];
+    const pod = document.getElementById('podiumSection');
+    pod.innerHTML = '';
+    order.forEach((s, i) => {
+      if (!s) return;
+      const realRank = [1,0,2][i];
+      const div = document.createElement('div');
+      div.className = 'podium-card ' + classes[i];
+      div.style.animationDelay = (.1 + i * .08) + 's';
+      div.innerHTML = `
+        <div class="podium-avatar-wrap">
+          ${classes[i]==='p1' ? '<div class="podium-crown">👑</div>' : ''}
+          <div class="podium-avatar" style="background:${s.av}">${s.name.charAt(0)}</div>
+          <div class="podium-rank-badge">${blockNums[i]}</div>
+        </div>
+        <div class="podium-name">${s.name}${s.isMe ? ' <span style="color:var(--cyan);font-size:.7rem">(you)</span>' : ''}</div>
+        <div class="podium-xp">${s.xp.toLocaleString()} XP</div>
+        <div class="podium-block"><span class="block-num">${blockNums[i]}</span></div>
+      `;
+      pod.appendChild(div);
+    });
+  }
+
+  function buildTable(students) {
+    const body = document.getElementById('lbBody');
+    const query = currentSearch.toLowerCase();
+    const filtered = students.filter(s => !query || s.name.toLowerCase().includes(query) || s.handle.toLowerCase().includes(query));
+    body.innerHTML = '';
+    filtered.forEach((s, i) => {
+      const originalRank = students.indexOf(s);
+      const row = document.createElement('div');
+      row.className = 'lb-row' + (s.isMe ? ' is-me' : '');
+      row.style.animationDelay = (.05 + i * .03) + 's';
+      const rankDisplay = originalRank < 3
+        ? `<span class="${rankColor(originalRank)}">${rankEmoji(originalRank)}</span>`
+        : `<span class="${s.isMe ? 'rank-me' : ''}">${originalRank + 1}</span>`;
+      const streakDisplay = s.streak >= 7
+        ? `<span class="streak-hot">🔥 ${s.streak}d</span>`
+        : `<span>${s.streak > 0 ? s.streak + 'd' : '—'}</span>`;
+      row.innerHTML = `
+        <div class="rank-num">${rankDisplay}</div>
+        <div class="player-cell">
+          <div class="player-av" style="background:${s.av}">${s.name.charAt(0)}</div>
+          <div>
+            <div class="player-name">${s.name}${s.isMe ? '<span class="me-badge">YOU</span>' : ''}</div>
+            <div class="player-handle">${s.handle ? '@' + s.handle.replace('@','') : '·'}</div>
+          </div>
+        </div>
+        <div class="xp-col ${xpClass(originalRank, s.isMe)}">${s.xp.toLocaleString()}</div>
+        <div class="streak-col col-streak">${streakDisplay}</div>
+        <div class="col-level"><span class="level-pill">Lv.${s.level}</span></div>
+      `;
+      body.appendChild(row);
+    });
+  }
+
+  function updateGapCard(students) {
+    const meIdx = students.findIndex(s => s.isMe);
+    const card = document.getElementById('gapCard');
+    if (meIdx <= 0) { card.style.display = 'none'; return; }
+    const above = students[meIdx - 1];
+    const me = students[meIdx];
+    const gap = above.xp - me.xp + 1;
+    const pct = Math.max(5, Math.min(95, (me.xp / above.xp) * 100));
+    document.getElementById('gapTarget').textContent = '#' + meIdx;
+    document.getElementById('gapAmt').textContent = '+' + gap.toLocaleString() + ' XP needed';
+    document.getElementById('gapFill').style.width = pct + '%';
+  }
+
+  function render() {
+    let data = [...ALL_STUDENTS];
+    if (currentFilter === 'weekly') {
+      // Slightly shuffle XP for "this week" flavour
+      data = data.map(s => ({ ...s, xp: Math.round(s.xp * (.18 + (s.isMe ? .27 : Math.random() * .15))) }));
+      data.sort((a,b) => b.xp - a.xp);
+    }
+    buildPodium(data);
+    buildTable(data);
+    updateGapCard(data);
+  }
+
+  function setFilter(f, el) {
+    currentFilter = f;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    render();
+  }
+
+  function filterSearch(val) {
+    currentSearch = val;
+    let data = [...ALL_STUDENTS];
+    if (currentFilter === 'weekly') {
+      data = data.map(s => ({ ...s, xp: Math.round(s.xp * (.18 + (s.isMe ? .27 : .12))) }));
+      data.sort((a,b) => b.xp - a.xp);
+    }
+    buildTable(data);
+  }
+
+  render();
+</script>
+</body>
+</html>

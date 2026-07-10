@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — CodeLearn</title>
+  <link rel="icon" type="image/png" href="main ico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --blue: #2563eb;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --purple: #7c3aed;
+      --red: #ef4444;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+      --sidebar-w: 240px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      padding: 1.5rem 1rem;
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      z-index: 50;
+    }
+    .sidebar-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.3rem;
+      color: var(--cyan);
+      padding: .25rem .75rem 1.75rem;
+    }
+    .sidebar-logo span { color: var(--green); }
+    .sidebar-section {
+      font-family: 'Space Mono', monospace;
+      font-size: .63rem; color: var(--muted);
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: .5rem .75rem .4rem;
+      margin-top: .5rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem .75rem;
+      border-radius: 9px;
+      color: var(--muted);
+      font-size: .88rem; font-weight: 500;
+      cursor: pointer; transition: all .2s;
+      text-decoration: none; margin-bottom: 2px;
+      border: 1px solid transparent;
+    }
+    .nav-item:hover { background: rgba(6,182,212,0.07); color: var(--text); }
+    .nav-item.active {
+      background: rgba(6,182,212,0.12);
+      color: var(--cyan);
+      border-color: rgba(6,182,212,0.2);
+    }
+    .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--cyan); color: #000;
+      font-size: .62rem; font-weight: 700;
+      padding: 1px 6px; border-radius: 100px;
+      font-family: 'Space Mono', monospace;
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+    .user-chip {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem .75rem;
+      border-radius: 9px; cursor: pointer;
+      transition: background .2s;
+    }
+    .user-chip:hover { background: rgba(255,255,255,0.04); }
+    .user-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: .85rem; color: #000;
+      flex-shrink: 0;
+    }
+    .user-info-name { font-size: .85rem; font-weight: 600; color: var(--text); }
+    .user-info-role { font-size: .72rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+    /* MAIN */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+
+    /* TOPBAR */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5,13,26,0.8);
+      backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 40;
+    }
+    .topbar-left h1 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; }
+    .topbar-left p { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    .topbar-right { display: flex; align-items: center; gap: .75rem; }
+    .chip {
+      display: flex; align-items: center; gap: .4rem;
+      border-radius: 100px; padding: .32rem .85rem;
+      font-size: .78rem; font-family: 'Space Mono', monospace;
+    }
+    .chip-yellow { background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.25); color: var(--yellow); }
+    .chip-cyan   { background: rgba(6,182,212,0.1);  border: 1px solid rgba(6,182,212,0.25);  color: var(--cyan); }
+    .notif-btn {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem; transition: border-color .2s;
+      position: relative;
+    }
+    .notif-btn:hover { border-color: var(--cyan); }
+    .notif-dot {
+      position: absolute; top: 6px; right: 6px;
+      width: 7px; height: 7px;
+      background: var(--red); border-radius: 50%;
+      border: 1.5px solid var(--bg);
+    }
+
+    /* CONTENT */
+    .content { padding: 2rem; flex: 1; }
+
+    /* WELCOME BANNER */
+    .welcome-banner {
+      background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(37,99,235,0.08));
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2rem;
+      position: relative; overflow: hidden;
+      animation: fadeUp .5s ease both;
+    }
+    .welcome-banner::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(37,99,235,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,0.05) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .welcome-text { position: relative; z-index: 1; }
+    .welcome-text h2 { font-family: 'Syne', sans-serif; font-size: 1.35rem; font-weight: 800; margin-bottom: .3rem; }
+    .welcome-text h2 .name { color: var(--cyan); }
+    .welcome-text p { color: var(--muted); font-size: .87rem; }
+    .welcome-cta {
+      position: relative; z-index: 1;
+      background: var(--cyan); color: #000;
+      border: none; border-radius: 9px;
+      padding: .7rem 1.5rem;
+      font-family: 'Syne', sans-serif;
+      font-size: .9rem; font-weight: 700;
+      cursor: pointer; transition: all .2s; white-space: nowrap;
+    }
+    .welcome-cta:hover { background: #0891b2; transform: translateY(-2px); }
+
+    /* STAT ROW */
+    .stat-row {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.25rem 1.4rem;
+      position: relative; overflow: hidden;
+      transition: border-color .2s, transform .2s;
+      animation: fadeUp .5s ease both;
+    }
+    .stat-card:nth-child(1){animation-delay:.05s}
+    .stat-card:nth-child(2){animation-delay:.10s}
+    .stat-card:nth-child(3){animation-delay:.15s}
+    .stat-card:nth-child(4){animation-delay:.20s}
+    .stat-card:hover { transform: translateY(-2px); border-color: rgba(6,182,212,0.3); }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      border-radius: 14px 14px 0 0;
+    }
+    .sc1::before{background:linear-gradient(90deg,var(--cyan),var(--blue))}
+    .sc2::before{background:linear-gradient(90deg,var(--green),var(--cyan))}
+    .sc3::before{background:linear-gradient(90deg,var(--yellow),#f97316)}
+    .sc4::before{background:linear-gradient(90deg,var(--purple),var(--blue))}
+    .stat-label { font-size:.72rem;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:.5px;text-transform:uppercase;margin-bottom:.5rem; }
+    .stat-val { font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;line-height:1;margin-bottom:.25rem; }
+    .c-cyan{color:var(--cyan)} .c-green{color:var(--green)} .c-yellow{color:var(--yellow)} .c-purple{color:var(--purple)}
+    .stat-sub { font-size:.76rem;color:var(--muted); }
+    .stat-icon { position:absolute;right:1.1rem;top:50%;transform:translateY(-50%);font-size:1.8rem;opacity:.12; }
+
+    /* DASHBOARD GRID */
+    .dashboard-grid { display:grid;grid-template-columns:1fr 320px;gap:1.5rem; }
+    .left-col { display:flex;flex-direction:column;gap:1.5rem; }
+    .right-col { display:flex;flex-direction:column;gap:1.5rem; }
+
+    /* CARD BOX */
+    .card-box {
+      background:var(--card);border:1px solid var(--border);
+      border-radius:14px;padding:1.4rem;
+      animation:fadeUp .5s ease both;
+    }
+    .card-box:nth-child(1){animation-delay:.1s}
+    .card-box:nth-child(2){animation-delay:.15s}
+    .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;}
+    .sec-title{font-family:'Syne',sans-serif;font-size:.97rem;font-weight:700;}
+    .sec-link{font-size:.78rem;color:var(--cyan);text-decoration:none;font-family:'Space Mono',monospace;}
+    .sec-link:hover{opacity:.7}
+
+    /* MODULES */
+    .modules-list{display:flex;flex-direction:column;gap:.75rem;}
+    .module-row {
+      display:flex;align-items:center;gap:1rem;
+      padding:.9rem 1rem;border-radius:10px;
+      border:1px solid var(--border);background:var(--surface);
+      cursor:pointer;transition:border-color .2s,transform .15s;
+    }
+    .module-row:hover{border-color:rgba(6,182,212,.3);transform:translateX(3px);}
+    .mod-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+    .mod-info{flex:1;min-width:0;}
+    .mod-name{font-weight:600;font-size:.9rem;margin-bottom:.1rem;}
+    .mod-meta{font-size:.75rem;color:var(--muted);margin-bottom:.45rem;}
+    .prog-bar{height:4px;background:var(--border);border-radius:4px;overflow:hidden;}
+    .prog-fill{height:100%;border-radius:4px;}
+    .mod-badge{font-size:.68rem;font-family:'Space Mono',monospace;padding:.22rem .6rem;border-radius:100px;flex-shrink:0;}
+    .b-done  {background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.25);}
+    .b-active{background:rgba(6,182,212,0.12); color:var(--cyan); border:1px solid rgba(6,182,212,0.25);}
+    .b-locked{background:rgba(122,144,176,.1); color:var(--muted);border:1px solid var(--border);}
+
+    /* ACTIVITY */
+    .activity-list{display:flex;flex-direction:column;gap:.65rem;}
+    .activity-item{display:flex;align-items:center;gap:.85rem;padding:.7rem .9rem;border-radius:9px;background:var(--surface);border:1px solid var(--border);}
+    .act-icon{font-size:1.1rem;width:24px;text-align:center;flex-shrink:0;}
+    .act-text{flex:1;font-size:.83rem;}
+    .act-text strong{color:var(--text);font-weight:600;}
+    .act-time{font-size:.72rem;color:var(--muted);font-family:'Space Mono',monospace;white-space:nowrap;}
+
+    /* XP */
+    .level-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.45rem;}
+    .level-tag{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--cyan);}
+    .xp-nums{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--muted);}
+    .xp-bar{height:8px;background:var(--border);border-radius:8px;overflow:hidden;margin-bottom:.5rem;}
+    .xp-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--cyan),var(--blue));width:68%;animation:growBar .8s .3s ease both;}
+    @keyframes growBar{from{width:0}}
+    .xp-note{font-size:.75rem;color:var(--muted);}
+    .xp-note span{color:var(--cyan);}
+
+    /* BADGES */
+    .badges-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-top:.25rem;}
+    .badge-item{display:flex;flex-direction:column;align-items:center;gap:.3rem;padding:.65rem .3rem;border-radius:10px;border:1px solid var(--border);background:var(--surface);transition:border-color .2s;}
+    .badge-item.earned{border-color:rgba(6,182,212,0.3);background:rgba(6,182,212,0.05);}
+    .badge-item:hover{border-color:rgba(6,182,212,.4);}
+    .badge-emoji{font-size:1.4rem;}
+    .badge-name{font-size:.62rem;color:var(--muted);text-align:center;line-height:1.3;font-family:'Space Mono',monospace;}
+    .badge-item.earned .badge-name{color:var(--cyan);}
+
+    /* STREAK */
+    .streak-days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+    .day-cell{aspect-ratio:1;border-radius:5px;background:var(--border);}
+    .day-cell.active{background:var(--cyan);opacity:.75;}
+    .day-cell.today{background:var(--green);box-shadow:0 0 6px rgba(34,197,94,.4);}
+    .streak-label{display:flex;justify-content:space-between;margin-top:.6rem;font-size:.72rem;color:var(--muted);font-family:'Space Mono',monospace;}
+
+    /* QUIZ */
+    .quiz-alert{display:flex;align-items:center;gap:1rem;padding:1rem 1.1rem;border-radius:10px;background:rgba(234,179,8,0.07);border:1px solid rgba(234,179,8,0.25);margin-top:.25rem;}
+    .quiz-icon{font-size:1.5rem;}
+    .quiz-title{font-weight:600;font-size:.88rem;margin-bottom:.15rem;}
+    .quiz-meta{font-size:.76rem;color:var(--muted);}
+    .quiz-btn{margin-left:auto;flex-shrink:0;background:var(--yellow);color:#000;border:none;border-radius:7px;padding:.45rem 1rem;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;}
+    .quiz-btn:hover{background:#ca9a06;transform:translateY(-1px);}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    @media(max-width:960px){.dashboard-grid{grid-template-columns:1fr}}
+    @media(max-width:768px){
+      .sidebar{transform:translateX(-100%)}
+      .main{margin-left:0}
+      .stat-row{grid-template-columns:1fr 1fr}
+      .welcome-banner{flex-direction:column;gap:1rem;align-items:flex-start}
+    }
+    @media(max-width:480px){
+      .stat-row{grid-template-columns:1fr}
+      .content{padding:1rem}
+      .topbar{padding:1rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Code<span>Learn</span></div>
+
+  <div class="sidebar-section">// Main</div>
+  <a class="nav-item active" href="dashboard.html">
+    <span class="nav-icon">🏠</span> Dashboard
+  </a>
+  <a class="nav-item" href="modules.html">
+    <span class="nav-icon">📚</span> Modules
+    <span class="nav-badge">5</span>
+  </a>
+  <a class="nav-item" href="quiz.html">
+    <span class="nav-icon">🧪</span> Quizzes
+    <span class="nav-badge">2</span>
+  </a>
+  <a class="nav-item" href="leaderboard.html">
+    <span class="nav-icon">🏆</span> Leaderboard
+  </a>
+
+  <div class="sidebar-section">// Account</div>
+  <a class="nav-item" href="profile.html">
+    <span class="nav-icon">👤</span> Profile
+  </a>
+  <a class="nav-item" href="settings.html">
+    <span class="nav-icon">⚙️</span> Settings
+  </a>
+  <a class="nav-item" href="home2.html">
+    <span class="nav-icon">🌐</span> Back to home
+  </a>
+
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar" id="sidebarInitial">S</div>
+      <div>
+        <div class="user-info-name" id="sidebarName">Student</div>
+        <div class="user-info-role">// student</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>My Dashboard</h1>
+      <p id="topGreeting">Welcome — let's keep that streak going!</p>
+    </div>
+    <div class="topbar-right">
+      <div class="chip chip-yellow">🔥 7-day streak</div>
+      <div class="chip chip-cyan">⚡ 1,340 XP</div>
+      <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- WELCOME -->
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h2>Welcome back, <span class="name" id="welcomeName">Student</span>! 👋</h2>
+        <p>You're 32% through the Python module. Keep going — you're doing great.</p>
+      </div>
+      <button class="welcome-cta" onclick="window.location.href='learning.html'">Continue Learning →</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stat-row">
+      <div class="stat-card sc1">
+        <div class="stat-label">Modules Done</div>
+        <div class="stat-val c-cyan">2 / 5</div>
+        <div class="stat-sub">HTML &amp; Networks ✓</div>
+        <div class="stat-icon">📚</div>
+      </div>
+      <div class="stat-card sc2">
+        <div class="stat-label">Quiz Score Avg</div>
+        <div class="stat-val c-green">84%</div>
+        <div class="stat-sub">↑ 12% from last week</div>
+        <div class="stat-icon">📊</div>
+      </div>
+      <div class="stat-card sc3">
+        <div class="stat-label">Current Streak</div>
+        <div class="stat-val c-yellow">7 days</div>
+        <div class="stat-sub">Best: 12 days</div>
+        <div class="stat-icon">🔥</div>
+      </div>
+      <div class="stat-card sc4">
+        <div class="stat-label">Certificates</div>
+        <div class="stat-val c-purple">2</div>
+        <div class="stat-sub">3 more available</div>
+        <div class="stat-icon">🏆</div>
+      </div>
+    </div>
+
+    <!-- GRID -->
+    <div class="dashboard-grid">
+
+      <div class="left-col">
+        <!-- MODULES -->
+        <div class="card-box">
+          <div class="sec-head">
+            <div class="sec-title">My Modules</div>
+            <a class="sec-link" href="#">View All →</a>
+          </div>
+          <div class="modules-list">
+            <div class="module-row">
+              <div class="mod-icon" style="background:rgba(34,197,94,0.12)">🌐</div>
+              <div class="mod-info">
+                <div class="mod-name">Introduction to HTML</div>
+                <div class="mod-meta">12 lessons · 45 min</div>
+                <div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div>
+              </div>
+              <div class="mod-badge b-done">Done ✓</div>
+            </div>
+            <div class="module-row">
+              <div class="mod-icon" style="background:rgba(6,182,212,0.12)">🔗</div>
+              <div class="mod-info">
+                <div class="mod-name">Networks &amp; the Internet</div>
+                <div class="mod-meta">10 lessons · 40 min</div>
+                <div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div>
+              </div>
+              <div class="mod-badge b-done">Done ✓</div>
+            </div>
+            <div class="module-row">
+              <div class="mod-icon" style="background:rgba(37,99,235,0.12)">🐍</div>
+              <div class="mod-info">
+                <div class="mod-name">Python Programming</div>
+                <div class="mod-meta">18 lessons · 1 hr 20 min</div>
+                <div class="prog-bar"><div class="prog-fill" style="width:32%;background:var(--cyan)"></div></div>
+              </div>
+              <div class="mod-badge b-active">32% →</div>
+            </div>
+            <div class="module-row" style="opacity:.55">
+              <div class="mod-icon" style="background:rgba(122,144,176,0.1)">🗄️</div>
+              <div class="mod-info">
+                <div class="mod-name">Databases &amp; SQL</div>
+                <div class="mod-meta">14 lessons · 55 min</div>
+                <div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div>
+              </div>
+              <div class="mod-badge b-locked">🔒 Locked</div>
+            </div>
+            <div class="module-row" style="opacity:.55">
+              <div class="mod-icon" style="background:rgba(124,58,237,0.1)">🔐</div>
+              <div class="mod-info">
+                <div class="mod-name">Cybersecurity Basics</div>
+                <div class="mod-meta">16 lessons · 1 hr 10 min</div>
+                <div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div>
+              </div>
+              <div class="mod-badge b-locked">🔒 Locked</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTIVITY -->
+        <div class="card-box">
+          <div class="sec-head">
+            <div class="sec-title">Recent Activity</div>
+            <a class="sec-link" href="#">See All →</a>
+          </div>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="act-icon">✅</div>
+              <div class="act-text">Completed <strong>HTML Forms &amp; Inputs</strong> — scored 92%</div>
+              <div class="act-time">2h ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-icon">🏅</div>
+              <div class="act-text">Earned badge <strong>HTML Hero</strong></div>
+              <div class="act-time">2h ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-icon">🔥</div>
+              <div class="act-text">Extended your streak to <strong>7 days</strong></div>
+              <div class="act-time">1d ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-icon">📜</div>
+              <div class="act-text">Received <strong>Networks Certificate</strong></div>
+              <div class="act-time">3d ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <!-- LEVEL & XP -->
+        <div class="card-box">
+          <div class="sec-title" style="margin-bottom:1rem">Level &amp; XP</div>
+          <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.1rem">
+            <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;color:#000;flex-shrink:0">5</div>
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem">Level 5 — Coder</div>
+              <div style="font-size:.78rem;color:var(--muted)">1,340 / 2,000 XP to Level 6</div>
+            </div>
+          </div>
+          <div class="level-row">
+            <div class="level-tag">// Progress</div>
+            <div class="xp-nums">1,340 / 2,000 XP</div>
+          </div>
+          <div class="xp-bar"><div class="xp-fill"></div></div>
+          <div class="xp-note">660 XP to reach <span>Level 6 — Builder</span></div>
+        </div>
+
+        <!-- BADGES -->
+        <div class="card-box">
+          <div class="sec-head">
+            <div class="sec-title">Badges</div>
+            <a class="sec-link" href="#">All →</a>
+          </div>
+          <div class="badges-grid">
+            <div class="badge-item earned"><div class="badge-emoji">🌐</div><div class="badge-name">HTML Hero</div></div>
+            <div class="badge-item earned"><div class="badge-emoji">🔗</div><div class="badge-name">Net Ninja</div></div>
+            <div class="badge-item earned"><div class="badge-emoji">🔥</div><div class="badge-name">7-Day Fire</div></div>
+            <div class="badge-item"><div class="badge-emoji">🐍</div><div class="badge-name">Pythonist</div></div>
+            <div class="badge-item"><div class="badge-emoji">🗄️</div><div class="badge-name">SQL Pro</div></div>
+            <div class="badge-item"><div class="badge-emoji">🔐</div><div class="badge-name">Sec Guard</div></div>
+            <div class="badge-item"><div class="badge-emoji">🏆</div><div class="badge-name">Top 10</div></div>
+            <div class="badge-item"><div class="badge-emoji">🎓</div><div class="badge-name">Graduate</div></div>
+          </div>
+        </div>
+
+        <!-- STREAK CALENDAR -->
+        <div class="card-box">
+          <div class="sec-head">
+            <div class="sec-title">This Month's Streak</div>
+            <div style="font-size:.75rem;color:var(--muted);font-family:'Space Mono',monospace">May 2026</div>
+          </div>
+          <div class="streak-days" id="streakCal"></div>
+          <div class="streak-label"><span>1 May</span><span>Today</span></div>
+        </div>
+
+        <!-- UPCOMING QUIZ -->
+        <div class="card-box">
+          <div class="sec-title" style="margin-bottom:.85rem">Up Next</div>
+          <div class="quiz-alert">
+            <div class="quiz-icon">🧪</div>
+            <div>
+              <div class="quiz-title">HtML QUIZ #1</div>
+              <div class="quiz-meta">what is html,elements  &amp; images · 10 questions</div>
+            </div>
+            <button class="quiz-btn" onclick="window.location.href='quiz.html'">Start →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Load name saved by signup page
+  try {
+    const saved = localStorage.getItem('cl_user');
+    if (saved) {
+      const user = JSON.parse(saved);
+      const first = user.firstName || 'Student';
+      const last  = user.lastName  || '';
+      document.getElementById('welcomeName').textContent  = first;
+      document.getElementById('sidebarName').textContent  = first + (last ? ' ' + last : '');
+      document.getElementById('sidebarInitial').textContent = first.charAt(0).toUpperCase();
+    }
+  } catch(e) {}
+
+  // Time-based greeting
+  const hr = new Date().getHours();
+  const greet = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('topGreeting').textContent = greet + ' — let\'s keep that streak going!';
+
+  // Streak calendar
+  const cal = document.getElementById('streakCal');
+  const activeDays = [1,2,3,5,6,7,8,10,14,15,16,17,18,19,21,22,23,24,25,26,27];
+  const today = new Date().getDate();
+  for (let d = 1; d <= 31; d++) {
+    const cell = document.createElement('div');
+    cell.className = 'day-cell';
+    if (d === today) cell.classList.add('today');
+    else if (activeDays.includes(d) && d < today) cell.classList.add('active');
+    cal.appendChild(cell);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quizzes — CodeLearn</title>
+  <link rel="icon" type="image/png" href="main ico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --blue: #2563eb;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --purple: #7c3aed;
+      --red: #ef4444;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+      --sidebar-w: 240px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* SIDEBAR (Mirrored from Dashboard) */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      padding: 1.5rem 1rem;
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      z-index: 50;
+    }
+    .sidebar-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--cyan); padding: .25rem .75rem 1.75rem; }
+    .sidebar-logo span { color: var(--green); }
+    .sidebar-section { font-family: 'Space Mono', monospace; font-size: .63rem; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; padding: .5rem .75rem .4rem; margin-top: .5rem; }
+    .nav-item { display: flex; align-items: center; gap: .75rem; padding: .65rem .75rem; border-radius: 9px; color: var(--muted); font-size: .88rem; font-weight: 500; cursor: pointer; transition: all .2s; text-decoration: none; margin-bottom: 2px; border: 1px solid transparent; }
+    .nav-item:hover { background: rgba(6,182,212,0.07); color: var(--text); }
+    .nav-item.active { background: rgba(6,182,212,0.12); color: var(--cyan); border-color: rgba(6,182,212,0.2); }
+    .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--cyan); color: #000; font-size: .62rem; font-weight: 700; padding: 1px 6px; border-radius: 100px; font-family: 'Space Mono', monospace; }
+    .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 1rem; }
+    .user-chip { display: flex; align-items: center; gap: .75rem; padding: .65rem .75rem; border-radius: 9px; cursor: pointer; }
+    .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--green), var(--cyan)); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: .85rem; color: #000; }
+    .user-info-name { font-size: .85rem; font-weight: 600; color: var(--text); }
+    .user-info-role { font-size: .72rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+    /* MAIN */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 2rem; border-bottom: 1px solid var(--border); background: rgba(5,13,26,0.8); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 40; }
+    .topbar-left h1 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; }
+    .topbar-left p { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    .topbar-right { display: flex; align-items: center; gap: .75rem; }
+    .chip { display: flex; align-items: center; gap: .4rem; border-radius: 100px; padding: .32rem .85rem; font-size: .78rem; font-family: 'Space Mono', monospace; }
+    .chip-yellow { background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.25); color: var(--yellow); }
+    .chip-cyan { background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.25); color: var(--cyan); }
+
+    /* CONTENT */
+    .content { padding: 2rem; flex: 1; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+    /* QUIZ STATS */
+    .quiz-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; text-align: center; }
+    .stat-label { font-size: .65rem; color: var(--muted); font-family: 'Space Mono', monospace; text-transform: uppercase; margin-bottom: .5rem; }
+    .stat-val { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--text); }
+
+    /* FEATURED SECTION */
+    .featured-quiz {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(37, 99, 235, 0.1));
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 16px; padding: 2rem; margin-bottom: 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      position: relative; overflow: hidden;
+    }
+    .featured-content { z-index: 1; }
+    .featured-tag { background: var(--purple); color: #fff; font-size: .65rem; font-family: 'Space Mono', monospace; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: .75rem; display: inline-block; }
+    .featured-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: .5rem; }
+    .featured-meta { font-size: .85rem; color: var(--muted); display: flex; gap: 1.5rem; }
+    .start-btn { 
+      background: var(--cyan); color: #000; border: none; border-radius: 8px; 
+      padding: .8rem 2rem; font-family: 'Syne', sans-serif; font-weight: 700; 
+      cursor: pointer; transition: 0.2s; z-index: 1; 
+    }
+    .start-btn:hover { background: #0891b2; transform: translateY(-2px); }
+
+    /* CATEGORIES GRID */
+    .section-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 1.2rem; display: flex; align-items: center; gap: .5rem; }
+    .quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
+    .quiz-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.5rem; transition: 0.2s; cursor: pointer;
+    }
+    .quiz-card:hover { border-color: var(--cyan); transform: translateY(-3px); }
+    .quiz-card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+    .quiz-icon { font-size: 1.5rem; width: 45px; height: 45px; background: var(--surface); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .quiz-difficulty { font-size: .65rem; font-family: 'Space Mono', monospace; padding: 2px 8px; border-radius: 100px; }
+    .diff-easy { background: rgba(34,197,94,0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+    .diff-med  { background: rgba(234,179,8,0.1); color: var(--yellow); border: 1px solid rgba(234,179,8,0.2); }
+    .quiz-name { font-weight: 600; font-size: 1rem; margin-bottom: .25rem; }
+    .quiz-desc { font-size: .8rem; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.4; }
+    .quiz-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 1rem; font-size: .75rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+    @media(max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .quiz-stats { grid-template-columns: 1fr 1fr; }
+      .featured-quiz { flex-direction: column; gap: 1.5rem; align-items: flex-start; }
+    }
+    /* AI CHAT BOT STYLES */
+.ai-bot-toggle {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  box-shadow: 0 8px 32px rgba(6, 182, 212, 0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; cursor: pointer; z-index: 100;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.ai-bot-toggle:hover { transform: scale(1.1) rotate(5deg); }
+
+.chat-window {
+  position: fixed;
+  bottom: 6rem;
+  right: 2rem;
+  width: 350px;
+  height: 480px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  display: none; flex-direction: column;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  z-index: 99; overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+.chat-window.active { display: flex; animation: fadeUp 0.3s ease; }
+
+.chat-header {
+  padding: 1rem;
+  background: rgba(6, 182, 212, 0.1);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: .75rem;
+}
+.chat-status { width: 8px; height: 8px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); }
+
+.chat-messages {
+  flex: 1; padding: 1rem;
+  overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;
+}
+.msg { max-width: 80%; padding: .75rem; border-radius: 12px; font-size: .85rem; line-height: 1.4; }
+.msg-ai { background: var(--card); color: var(--text); align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid var(--border); }
+.msg-user { background: var(--cyan); color: #000; align-self: flex-end; border-bottom-right-radius: 2px; font-weight: 500; }
+
+.chat-input-area {
+  padding: 1rem; border-top: 1px solid var(--border);
+  display: flex; gap: .5rem; background: var(--bg);
+}
+.chat-input {
+  flex: 1; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); padding: .5rem .75rem; font-family: inherit; font-size: .85rem;
+}
+.chat-input:focus { outline: none; border-color: var(--cyan); }
+.send-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
+.send-btn:hover { transform: scale(1.1); }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">Code<span>Learn</span></div>
+  <div class="sidebar-section">// Main</div>
+  <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+  <a class="nav-item" href="modules.html"><span class="nav-icon">📚</span> Modules <span class="nav-badge">5</span></a>
+  <a class="nav-item active" href="quiz.html"><span class="nav-icon">🧪</span> Quizzes <span class="nav-badge">2</span></a>
+  <a class="nav-item" href="leaderboard.html"><span class="nav-icon">🏆</span> Leaderboard</a>
+  <div class="sidebar-section">// Account</div>
+  <a class="nav-item" href="profile.html"><span class="nav-icon">👤</span> Profile</a>
+  <a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span> Settings</a>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar" id="sidebarInitial">S</div>
+      <div>
+        <div class="user-info-name" id="sidebarName">Student</div>
+        <div class="user-info-role">// student</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Knowledge Check</h1>
+      <p>Test your skills and earn extra XP.</p>
+    </div>
+    <div class="topbar-right">
+      <div class="chip chip-yellow">🔥 7-day streak</div>
+      <div class="chip chip-cyan">⚡ 1,340 XP</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="quiz-stats">
+      <div class="stat-card">
+        <div class="stat-label">Quizzes Done</div>
+        <div class="stat-val">14</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg. Accuracy</div>
+        <div class="stat-val" style="color:var(--green)">84%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Questions Solved</div>
+        <div class="stat-val">142</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Quiz XP</div>
+        <div class="stat-val" style="color:var(--cyan)">450</div>
+      </div>
+    </div>
+
+    <div class="section-title">✨ Recommended for You</div>
+    <div class="featured-quiz">
+      <div class="featured-content">
+        <span class="featured-tag">Next in Path</span>
+        <h2 class="featured-title">HtML QUIZ #1: Elements & Structures</h2>
+        <p style="color:var(--muted); margin-bottom: 1rem;">Validate your knowledge of tags, attributes, and semantic HTML layout.</p>
+        <div class="featured-meta">
+          <span>⏱️ 10 Mins</span>
+          <span>❓ 10 Questions</span>
+          <span>⚡ +50 XP</span>
+        </div>
+      </div>
+      <button class="start-btn" onclick="window.location.href='htmlquiz.html'">Start Quiz →</button>
+    </div>
+
+    <div class="section-title">📂 Browse by Category</div>
+    <div class="quiz-grid">
+      <div class="quiz-card">
+        <div class="quiz-card-head">
+          <div class="quiz-icon">🌐</div>
+          <span class="quiz-difficulty diff-easy">Beginner</span>
+        </div>
+        <div class="quiz-name">HTML Forms & Inputs</div>
+        <p class="quiz-desc">Test your knowledge on input types, labels, and form validation techniques.</p>
+        <div class="quiz-footer">
+          <span>8 Questions</span>
+          <span style="color:var(--green)">Best: 92%</span>
+        </div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-card-head">
+          <div class="quiz-icon">🔗</div>
+          <span class="quiz-difficulty diff-med">Intermediate</span>
+        </div>
+        <div class="quiz-name">Networking Protocols</div>
+        <p class="quiz-desc">HTTP, HTTPS, FTP, and DNS. Do you know how the web really talks?</p>
+        <div class="quiz-footer">
+          <span>15 Questions</span>
+          <span style="color:var(--yellow)">Best: 78%</span>
+        </div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-card-head">
+          <div class="quiz-icon">🐍</div>
+          <span class="quiz-difficulty diff-easy">Beginner</span>
+        </div>
+        <div class="quiz-name">Python Variables & Types</div>
+        <p class="quiz-desc">Data types, assignment, and basic operations in the Python language.</p>
+        <div class="quiz-footer">
+          <span>12 Questions</span>
+          <span>Not Started</span>
+        </div>
+      </div>
+
+      <div class="quiz-card" style="opacity: 0.6;">
+        <div class="quiz-card-head">
+          <div class="quiz-icon">🗄️</div>
+          <span class="quiz-difficulty diff-med">Intermediate</span>
+        </div>
+        <div class="quiz-name">SQL Select Statements</div>
+        <p class="quiz-desc">Querying databases using SELECT, WHERE, and basic JOINS.</p>
+        <div class="quiz-footer">
+          <span>10 Questions</span>
+          <span>🔒 Locked</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ai-bot-toggle" onclick="toggleChat()">🤖</div>
+
+<div class="chat-window" id="chatWindow">
+  <div class="chat-header">
+    <div class="chat-status"></div>
+    <div style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: .9rem;">CodeLearn Assistant</div>
+  </div>
+  <div class="chat-messages" id="chatMsgs">
+    <div class="msg msg-ai">
+      Hey there! Ready for your <strong>HTML Quiz</strong>? If you get stuck on a question, just ask me for a hint!
+    </div>
+  </div>
+  <div class="chat-input-area">
+    <input type="text" class="chat-input" id="chatInput" placeholder="Ask a hint...">
+    <button class="send-btn" onclick="sendMessage()">🚀</button>
+  </div>
+</div>
+</div>
+
+<script>
+  // Handle user data from LocalStorage
+  try {
+    const saved = localStorage.getItem('cl_user');
+    if (saved) {
+      const user = JSON.parse(saved);
+      const first = user.firstName || 'Student';
+      document.getElementById('sidebarName').textContent = first + (user.lastName ? ' ' + user.lastName : '');
+      document.getElementById('sidebarInitial').textContent = first.charAt(0).toUpperCase();
+    }
+  } catch(e) {}
+  function toggleChat() {
+  document.getElementById('chatWindow').classList.toggle('active');
+}
+
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msgArea = document.getElementById('chatMsgs');
+  
+  if (input.value.trim() === "") return;
+
+  // Add User Message
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg msg-user';
+  userMsg.textContent = input.value;
+  msgArea.appendChild(userMsg);
+
+  const query = input.value.toLowerCase();
+  input.value = "";
+  msgArea.scrollTop = msgArea.scrollHeight;
+
+  // Simple Mock AI Response logic
+  setTimeout(() => {
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'msg msg-ai';
+    
+    if (query.includes('html')) {
+      aiMsg.innerHTML = "HTML stands for <strong>HyperText Markup Language</strong>. Think of it as the skeleton of a webpage!";
+    } else if (query.includes('hint')) {
+      aiMsg.textContent = "Try looking at the attributes! Remember, an 'href' is usually used for links.";
+    } else {
+      aiMsg.textContent = "Interesting question! Let's focus on finishing the quiz first so you can earn that XP. ⚡";
+    }
+    
+    msgArea.appendChild(aiMsg);
+    msgArea.scrollTop = msgArea.scrollHeight;
+  }, 800);
+}
+
+// Allow Enter key to send
+document.getElementById('chatInput').addEventListener('keypress', function (e) {
+  if (e.key === 'Enter') sendMessage();
+});
+</script>
+</body>
+</html>

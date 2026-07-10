@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Class Analytics — CodeLearn Admin</title>
+  <link rel="icon" type="image/png" href="main ico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --purple: #7c3aed;
+      --red: #ef4444;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border); padding: 2rem 1.5rem; }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; color: var(--cyan); font-size: 1.4rem; margin-bottom: 2.5rem; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-radius: 8px; color: var(--muted); text-decoration: none; font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .nav-item.active { background: rgba(6, 182, 212, 0.1); color: var(--cyan); }
+
+    /* MAIN */
+    .main { flex: 1; padding: 2.5rem; overflow-x: hidden; }
+    .header { margin-bottom: 2rem; }
+    .header h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem; }
+
+    .analytics-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
+    .card-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; margin-bottom: 1.5rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+    /* CHART WRAPPERS */
+    .chart-container { position: relative; height: 300px; width: 100%; }
+
+    /* FRICTION LIST */
+    .friction-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .friction-item:last-child { border: none; }
+    .module-tag { font-family: 'Space Mono'; font-size: 0.75rem; color: var(--cyan); }
+    .fail-rate { font-weight: 700; color: var(--red); }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="logo">CodeLearn<span>.edu</span></div>
+    <a href="teacher-dashboard.html" class="nav-item">📊 Overview</a>
+    <a href="students-list.html" class="nav-item">👨‍🎓 Students</a>
+    <a href="curriculum-admin.html" class="nav-item">📚 Curriculum</a>
+    <a href="#" class="nav-item active">📈 Analytics</a>
+  </aside>
+
+  <main class="main">
+    <div class="header">
+      <h1>Performance Insights</h1>
+      <p style="color: var(--muted); font-size: 0.9rem;">Term 1 — Namilyango College Class 10A</p>
+    </div>
+
+    <div class="analytics-grid">
+      <div class="card">
+        <div class="card-title">Average Score Trend (Weekly)</div>
+        <div class="chart-container">
+          <canvas id="growthChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Engagement (XP Distribution)</div>
+        <div class="chart-container">
+          <canvas id="engagementChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="analytics-grid">
+      <div class="card">
+        <div class="card-title">Topic Friction Points (Lowest Scores)</div>
+        <div class="friction-item">
+          <div>
+            <div class="module-tag">PYTHON</div>
+            <div style="font-size: 0.9rem;">Nested Loops & Logic</div>
+          </div>
+          <div class="fail-rate">42% Fail Rate</div>
+        </div>
+        <div class="friction-item">
+          <div>
+            <div class="module-tag">HARDWARE</div>
+            <div style="font-size: 0.9rem;">XOR Gate Logic</div>
+          </div>
+          <div class="fail-rate">38% Fail Rate</div>
+        </div>
+        <div class="friction-item">
+          <div>
+            <div class="module-tag">WEB</div>
+            <div style="font-size: 0.9rem;">CSS Flexbox Alignment</div>
+          </div>
+          <div class="fail-rate">25% Fail Rate</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Peak Activity Hours</div>
+        <div class="chart-container" style="height: 200px;">
+          <canvas id="timeChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const chartDefaults = {
+      color: '#7a90b0',
+      font: { family: 'Inter' },
+      borderColor: 'rgba(37,99,235,0.1)'
+    };
+
+    // 1. GROWTH CHART (Line)
+    new Chart(document.getElementById('growthChart'), {
+      type: 'line',
+      data: {
+        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+        datasets: [{
+          label: 'Class Avg %',
+          data: [65, 68, 62, 75, 82, 84],
+          borderColor: '#06b6d4',
+          backgroundColor: 'rgba(6, 182, 212, 0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { grid: { color: 'rgba(255,255,255,0.05)' }, min: 0, max: 100 },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+
+    // 2. ENGAGEMENT CHART (Doughnut)
+    new Chart(document.getElementById('engagementChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['High XP', 'Steady', 'Inactive'],
+        datasets: [{
+          data: [12, 16, 4],
+          backgroundColor: ['#06b6d4', '#7c3aed', '#ef4444'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: '#7a90b0' } } }
+      }
+    });
+
+    // 3. TIME CHART (Bar)
+    new Chart(document.getElementById('timeChart'), {
+      type: 'bar',
+      data: {
+        labels: ['8am', '12pm', '4pm', '8pm'],
+        datasets: [{
+          data: [40, 95, 30, 85],
+          backgroundColor: 'rgba(6, 182, 212, 0.5)',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { display: false },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Networking & Internet Review — CodeLearn</title>
+  <link rel="icon" type="image/png" href="main ico.png">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --cyan: #06b6d4;
+      --purple: #7c3aed;
+      --blue: #2563eb;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 4rem 2rem; }
+
+    /* HEADER */
+    .header { border-left: 4px solid var(--blue); padding-left: 1.5rem; margin-bottom: 4rem; }
+    .tag { font-family: 'Space Mono'; color: var(--blue); font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
+    h1 { font-family: 'Syne'; font-size: 3rem; margin-top: 0.5rem; letter-spacing: -1px; }
+
+    /* GRID SYSTEM */
+    .review-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: 0.3s;
+    }
+    .card:hover { border-color: var(--blue); background: rgba(37,99,235,0.05); }
+
+    h2 { font-family: 'Syne'; font-size: 1.4rem; margin-bottom: 1.2rem; color: var(--cyan); display: flex; align-items: center; gap: 12px; }
+    
+    /* CONTENT STYLING */
+    .highlight-box {
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      font-family: 'Space Mono';
+      font-size: 0.85rem;
+      color: var(--blue);
+      border-left: 2px solid var(--blue);
+    }
+
+    .key-list { list-style: none; }
+    .key-list li { margin-bottom: 0.8rem; font-size: 0.9rem; color: var(--muted); padding-left: 20px; position: relative; }
+    .key-list li::before { content: '•'; position: absolute; left: 0; color: var(--blue); font-weight: bold; }
+
+    /* PROTOCOL TAGS */
+    .proto-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(124, 58, 237, 0.1);
+      color: var(--purple);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-family: 'Space Mono';
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+
+    /* FOOTER NAV */
+    .nav-footer { margin-top: 5rem; display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; border-top: 1px solid var(--border); }
+    .btn-finish {
+      background: var(--blue);
+      color: #fff;
+      padding: 1rem 2.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-family: 'Syne';
+      font-weight: 800;
+      transition: 0.3s;
+    }
+    .btn-finish:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37,99,235,0.2); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header class="header">
+      <div class="tag">System Review // Module 4</div>
+      <h1>Networks & The Internet</h1>
+      <p style="color: var(--muted); font-size: 1.1rem; max-width: 600px;">A technical summary of data transmission, protocols, and the global infrastructure of the web.</p>
+    </header>
+
+    <div class="review-grid">
+      
+      <div class="card">
+        <h2><span>01</span> Network Types</h2>
+        <p>Networks are categorized by their scale and geographical reach.</p>
+        <div class="highlight-box">
+          PAN (Personal) <br>
+          LAN (Local - School/Home) <br>
+          WAN (Wide - The Internet)
+        </div>
+        <ul class="key-list">
+          <li><strong>LAN:</strong> High speed, low cost, small area.</li>
+          <li><strong>WAN:</strong> Connects LANs using satellites or fiber cables.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2><span>02</span> Data Packets</h2>
+        <p>Data is broken into "packets" before being sent. Each packet contains the payload and a header.</p>
+        <ul class="key-list">
+          <li><strong>IP Address:</strong> The destination "house number."</li>
+          <li><strong>MAC Address:</strong> The unique "serial number" of the hardware.</li>
+          <li><strong>Routers:</strong> The "traffic police" directing packets.</li>
+        </ul>
+      </div>
+
+      <div class="card" style="grid-column: span 2;">
+        <h2><span>03</span> The Language of the Web (Protocols)</h2>
+        <p style="margin-bottom: 1rem;">Protocols are sets of rules that govern how devices communicate.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+          <span class="proto-tag">HTTP/S (Web Pages)</span>
+          <span class="proto-tag">FTP (File Transfer)</span>
+          <span class="proto-tag">SMTP (Email)</span>
+          <span class="proto-tag">DNS (Domain Name System)</span>
+          <span class="proto-tag">TCP/UDP (Transmission)</span>
+        </div>
+        <div class="highlight-box" style="margin-top: 1.5rem; color: var(--purple); border-color: var(--purple);">
+          <strong>Pro-Tip:</strong> DNS is like a phonebook. It turns human names (google.com) into machine numbers (142.250.190.46).
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span>04</span> Essential Hardware</h2>
+        <ul class="key-list">
+          <li><strong>NIC:</strong> Network Interface Card (Required for connection).</li>
+          <li><strong>Switch:</strong> Connects devices within a single LAN.</li>
+          <li><strong>Modem:</strong> Converts signals from the ISP for your router.</li>
+          <li><strong>Fiber Optics:</strong> Uses light pulses to transmit data at 300,000 km/s.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2><span>05</span> Network Security</h2>
+        <ul class="key-list">
+          <li><strong>Firewall:</strong> Monitors incoming/outgoing traffic.</li>
+          <li><strong>Encryption:</strong> Scrambling data so only the receiver can read it.</li>
+          <li><strong>VPN:</strong> Creates a "secure tunnel" over a public network.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <footer class="nav-footer">
+      <a href="dashboard.html" style="color: var(--muted); text-decoration: none; font-family: 'Space Mono';">← Exit Review</a>
+      <a href="final-assessment.html" class="btn-finish">Take Final Quiz →</a>
+    </footer>
+  </div>
+
+</body>
+</html>

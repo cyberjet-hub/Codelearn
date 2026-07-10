@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy — CodeLearn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --surface: #0b1628;
+      --card: #101e35;
+      --blue: #2563eb;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --purple: #a855f7;
+      --text: #e8f0fe;
+      --muted: #7a90b0;
+      --border: rgba(37,99,235,0.18);
+      --border-cyan: rgba(6,182,212,0.2);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(37,99,235,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,0.05) 1px, transparent 1px);
+      background-size: 56px 56px;
+      pointer-events: none;
+    }
+    .bg-glow {
+      position: fixed; pointer-events: none; z-index: 0;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(168,85,247,0.05) 0%, transparent 65%);
+      top: -200px; left: -200px;
+    }
+    .bg-glow-right {
+      position: fixed; pointer-events: none; z-index: 0;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(6,182,212,0.05) 0%, transparent 65%);
+      bottom: -100px; right: -100px;
+    }
+
+    .particles { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .particle {
+      position: absolute; width: 2px; height: 2px;
+      background: var(--purple); border-radius: 50%; opacity: 0;
+      animation: drift linear infinite;
+    }
+    @keyframes drift {
+      0%   { opacity: 0; transform: translateY(100vh) scale(0); }
+      10%  { opacity: .4; }
+      90%  { opacity: .15; }
+      100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(5,13,26,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo { display: flex; align-items: center; gap: .65rem; text-decoration: none; }
+    .nav-logo-mark {
+      width: 36px; height: 36px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(6,182,212,0.2);
+    }
+    .nav-logo-name { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--cyan); }
+    .nav-logo-name span { color: var(--green); }
+    .nav-back {
+      display: flex; align-items: center; gap: .4rem;
+      color: var(--muted); font-size: .83rem;
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      transition: color .2s;
+    }
+    .nav-back:hover { color: var(--cyan); }
+
+    /* ── LAYOUT ── */
+    .page-wrapper {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 3.5rem 2rem 6rem;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    @media (max-width: 800px) {
+      .page-wrapper { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 1.25rem 4rem; }
+      .sidebar { display: none; }
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: sticky; top: 88px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      animation: fadeIn .6s ease both;
+    }
+    .sidebar-title {
+      font-family: 'Space Mono', monospace;
+      font-size: .72rem; font-weight: 700;
+      color: var(--purple);
+      letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: 1rem; padding-bottom: .75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .toc-list { list-style: none; display: flex; flex-direction: column; gap: .25rem; }
+    .toc-list a {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .5rem .65rem; border-radius: 7px;
+      color: var(--muted); font-size: .82rem;
+      text-decoration: none; transition: all .2s;
+    }
+    .toc-list a:hover, .toc-list a.active { color: var(--purple); background: rgba(168,85,247,0.07); }
+    .toc-num { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--border); min-width: 18px; }
+    .toc-list a.active .toc-num { color: var(--purple); }
+
+    .sidebar-meta {
+      margin-top: 1.25rem; padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: .75rem; color: var(--muted);
+      font-family: 'Space Mono', monospace; line-height: 1.7;
+    }
+    .sidebar-meta span { color: var(--purple); }
+
+    /* ── GDPR BADGE STRIP ── */
+    .compliance-strip {
+      display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    .compliance-badge {
+      display: flex; align-items: center; gap: .4rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .4rem .85rem;
+      font-size: .75rem;
+      font-family: 'Space Mono', monospace;
+      color: var(--muted);
+      transition: border-color .2s;
+    }
+    .compliance-badge:hover { border-color: var(--border-cyan); color: var(--text); }
+    .compliance-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+
+    /* ── MAIN CONTENT ── */
+    .main-content { animation: slideUp .5s ease both; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      margin-bottom: 2.5rem; padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .45rem;
+      background: rgba(168,85,247,0.08);
+      border: 1px solid rgba(168,85,247,0.25);
+      border-radius: 20px; padding: .35rem .9rem;
+      font-size: .75rem; font-family: 'Space Mono', monospace;
+      color: var(--purple); margin-bottom: 1.25rem;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--purple);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(.7); }
+    }
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800; line-height: 1.15; margin-bottom: .75rem;
+    }
+    .hero h1 .accent { color: var(--purple); }
+    .hero-sub { color: var(--muted); font-size: .95rem; line-height: 1.7; max-width: 560px; }
+    .hero-meta { display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+    .meta-chip {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .78rem; color: var(--muted);
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* ── ALERT ── */
+    .alert {
+      display: flex; gap: .85rem;
+      background: rgba(6,182,212,0.06);
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 12px; padding: 1.1rem 1.25rem;
+      margin-bottom: 2.5rem; align-items: flex-start;
+    }
+    .alert-icon { font-size: 1.1rem; margin-top: .1rem; }
+    .alert-text { font-size: .85rem; color: #a5f3fc; line-height: 1.65; }
+    .alert-text strong { font-weight: 600; }
+
+    /* ── SECTION ── */
+    .section { margin-bottom: 3rem; scroll-margin-top: 96px; }
+    .section-header { display: flex; align-items: center; gap: .85rem; margin-bottom: 1.25rem; }
+    .section-num {
+      font-family: 'Space Mono', monospace; font-size: .7rem;
+      color: var(--purple);
+      background: rgba(168,85,247,0.08);
+      border: 1px solid rgba(168,85,247,0.2);
+      border-radius: 6px; padding: .2rem .5rem; white-space: nowrap;
+    }
+    .section h2 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text); }
+    .section p { color: #b0c4de; font-size: .9rem; line-height: 1.8; margin-bottom: .85rem; }
+    .section p:last-child { margin-bottom: 0; }
+    .section ul, .section ol { padding-left: 1.25rem; margin-bottom: .85rem; }
+    .section li { color: #b0c4de; font-size: .9rem; line-height: 1.8; margin-bottom: .3rem; }
+    .section li::marker { color: var(--purple); }
+
+    /* ── DATA TABLE ── */
+    .data-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: .85rem; }
+    .data-table th {
+      background: var(--card); color: var(--cyan);
+      font-family: 'Space Mono', monospace; font-size: .72rem;
+      font-weight: 700; letter-spacing: .5px;
+      padding: .75rem 1rem; text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      padding: .75rem 1rem; color: #b0c4de;
+      border-bottom: 1px solid rgba(37,99,235,0.1);
+      vertical-align: top; line-height: 1.6;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(6,182,212,0.03); }
+
+    /* ── RIGHTS GRID ── */
+    .rights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 1rem; margin: 1.25rem 0;
+    }
+    .right-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.1rem;
+      transition: border-color .2s, transform .2s;
+    }
+    .right-card:hover { border-color: rgba(168,85,247,0.3); transform: translateY(-2px); }
+    .right-card-icon { font-size: 1.4rem; margin-bottom: .5rem; }
+    .right-card-title { font-size: .82rem; font-weight: 600; color: var(--text); margin-bottom: .3rem; font-family: 'Syne', sans-serif; }
+    .right-card-text { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── COOKIE TABLE ── */
+    .cookie-type {
+      display: flex; align-items: flex-start; gap: .85rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem 1.1rem;
+      margin-bottom: .75rem; transition: border-color .2s;
+    }
+    .cookie-type:hover { border-color: rgba(168,85,247,0.25); }
+    .cookie-dot {
+      width: 10px; height: 10px; border-radius: 50%; margin-top: .3rem; flex-shrink: 0;
+    }
+    .cookie-dot.essential { background: var(--green); }
+    .cookie-dot.analytics { background: var(--cyan); }
+    .cookie-dot.functional { background: var(--blue); }
+    .cookie-dot.marketing { background: var(--amber); }
+    .cookie-type-name { font-size: .85rem; font-weight: 600; color: var(--text); margin-bottom: .25rem; }
+    .cookie-type-desc { font-size: .8rem; color: var(--muted); line-height: 1.6; }
+
+    code {
+      font-family: 'Space Mono', monospace; font-size: .82rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 5px; padding: .1rem .4rem; color: var(--cyan);
+    }
+
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 2.5rem 0;
+    }
+
+    /* ── CONTACT CARD ── */
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid rgba(168,85,247,0.25);
+      border-radius: 16px; padding: 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1.5rem; flex-wrap: wrap; margin-top: 1.5rem;
+    }
+    .contact-card-left h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: .35rem; }
+    .contact-card-left p { font-size: .85rem; color: var(--muted); }
+    .contact-btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .7rem 1.5rem;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      border: none; border-radius: 9px; color: #fff;
+      font-family: 'Syne', sans-serif; font-size: .9rem; font-weight: 700;
+      cursor: pointer; text-decoration: none; transition: all .2s;
+    }
+    .contact-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(168,85,247,0.25); }
+
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo { font-family: 'Syne', sans-serif; font-size: .95rem; font-weight: 800; color: var(--cyan); }
+    .footer-logo span { color: var(--green); }
+    .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-links a { font-size: .8rem; color: var(--muted); text-decoration: none; font-family: 'Space Mono', monospace; transition: color .2s; }
+    .footer-links a:hover { color: var(--cyan); }
+    .footer-copy { font-size: .78rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+  </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+<div class="bg-glow-right"></div>
+<div class="particles" id="particles"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="home.html" class="nav-logo">
+    <div class="nav-logo-mark">🚀</div>
+    <div class="nav-logo-name">Code<span>Learn</span></div>
+  </a>
+  <a href="javascript:history.back()" class="nav-back">← Back</a>
+</nav>
+
+<div class="page-wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">// Table of Contents</div>
+    <ul class="toc-list" id="toc">
+      <li><a href="#overview" class="active"><span class="toc-num">01</span> Overview</a></li>
+      <li><a href="#data-we-collect"><span class="toc-num">02</span> Data We Collect</a></li>
+      <li><a href="#how-we-use"><span class="toc-num">03</span> How We Use Data</a></li>
+      <li><a href="#sharing"><span class="toc-num">04</span> Data Sharing</a></li>
+      <li><a href="#cookies"><span class="toc-num">05</span> Cookies</a></li>
+      <li><a href="#retention"><span class="toc-num">06</span> Data Retention</a></li>
+      <li><a href="#security"><span class="toc-num">07</span> Security</a></li>
+      <li><a href="#your-rights"><span class="toc-num">08</span> Your Rights</a></li>
+      <li><a href="#minors"><span class="toc-num">09</span> Children's Privacy</a></li>
+      <li><a href="#international"><span class="toc-num">10</span> International Users</a></li>
+      <li><a href="#changes"><span class="toc-num">11</span> Policy Changes</a></li>
+      <li><a href="#contact"><span class="toc-num">12</span> Contact</a></li>
+    </ul>
+    <div class="sidebar-meta">
+      Last updated<br/>
+      <span>January 1, 2025</span><br/><br/>
+      Version <span>1.4.0</span>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <div class="hero">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        Legal Document
+      </div>
+      <h1>Privacy <span class="accent">Policy</span></h1>
+      <p class="hero-sub">
+        At CodeLearn, your privacy is not an afterthought — it's a core part of how we build our platform.
+        This policy explains exactly what data we collect, why we collect it, and how you stay in control.
+      </p>
+      <div class="hero-meta">
+        <div class="meta-chip">📅 Effective: January 1, 2025</div>
+        <div class="meta-chip">📍 Governing Law: Uganda</div>
+        <div class="meta-chip">🔖 Version 1.4.0</div>
+      </div>
+    </div>
+
+    <!-- Compliance badges -->
+    <div class="compliance-strip">
+      <div class="compliance-badge"><div class="compliance-badge-dot"></div> GDPR Aligned</div>
+      <div class="compliance-badge"><div class="compliance-badge-dot"></div> COPPA Compliant</div>
+      <div class="compliance-badge"><div class="compliance-badge-dot"></div> No Data Selling</div>
+      <div class="compliance-badge"><div class="compliance-badge-dot"></div> Encrypted Storage</div>
+    </div>
+
+    <div class="alert">
+      <span class="alert-icon">🔒</span>
+      <p class="alert-text">
+        <strong>Your data belongs to you.</strong> We never sell your personal information to third parties.
+        This policy is written in plain language so you always know exactly what's happening with your data.
+      </p>
+    </div>
+
+    <!-- 01 -->
+    <section class="section" id="overview">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>Overview</h2>
+      </div>
+      <p>
+        CodeLearn ("we", "us", or "our") operates the CodeLearn platform — including our website, mobile
+        applications, and all associated services (collectively, the "Platform"). This Privacy Policy describes
+        how we collect, use, store, and protect personal information when you use our Platform.
+      </p>
+      <p>
+        By using CodeLearn, you acknowledge that you have read and understood this Privacy Policy. This policy
+        applies to all users — students, teachers, visitors, and anyone else who interacts with our Platform.
+        It is incorporated into and forms part of our Terms and Conditions.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 02 -->
+    <section class="section" id="data-we-collect">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>Data We Collect</h2>
+      </div>
+      <p>We collect only the data necessary to provide and improve your learning experience:</p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Examples</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--text)">Account Data</strong></td>
+            <td>Name, email address, password (hashed), role (student/teacher)</td>
+            <td>You provide directly</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">Profile Data</strong></td>
+            <td>Profile photo, bio, learning goals, preferred language</td>
+            <td>You provide directly</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">Learning Data</strong></td>
+            <td>Course progress, quiz scores, code submissions, certificates</td>
+            <td>Generated by your activity</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">Usage Data</strong></td>
+            <td>Pages visited, features used, session duration, click patterns</td>
+            <td>Collected automatically</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">Device Data</strong></td>
+            <td>IP address, browser type, OS, device type, timezone</td>
+            <td>Collected automatically</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">Payment Data</strong></td>
+            <td>Billing name, last 4 digits of card, transaction ID</td>
+            <td>Via our payment processor</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">Communications</strong></td>
+            <td>Support tickets, forum posts, messages to instructors</td>
+            <td>You provide directly</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        We do <strong style="color:var(--text)">not</strong> collect full payment card details —
+        these are handled directly by our PCI-DSS compliant payment processor and are never stored on our servers.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 03 -->
+    <section class="section" id="how-we-use">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>How We Use Your Data</h2>
+      </div>
+      <p>We use your data for the following purposes, always with a lawful basis:</p>
+      <ul>
+        <li><strong style="color:var(--text)">Platform delivery</strong> — Creating and managing your account, providing access to courses and features, processing payments, and issuing certificates.</li>
+        <li><strong style="color:var(--text)">Personalisation</strong> — Recommending relevant courses, tracking your learning streak, and adapting the experience to your skill level and goals.</li>
+        <li><strong style="color:var(--text)">Communication</strong> — Sending account-related emails (receipts, password resets), product updates, and — only with your consent — marketing messages.</li>
+        <li><strong style="color:var(--text)">Safety & security</strong> — Detecting and preventing fraud, abuse, and unauthorised access; enforcing our Terms and Conditions.</li>
+        <li><strong style="color:var(--text)">Analytics & improvement</strong> — Understanding how users interact with the Platform so we can fix bugs, improve features, and develop new content.</li>
+        <li><strong style="color:var(--text)">Legal compliance</strong> — Meeting our obligations under applicable laws and responding to lawful requests from authorities.</li>
+      </ul>
+      <p>
+        We will never use your data for purposes incompatible with those listed above without first obtaining
+        your explicit consent.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 04 -->
+    <section class="section" id="sharing">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>Data Sharing &amp; Third Parties</h2>
+      </div>
+      <p>
+        <strong style="color:var(--text)">We do not sell your personal data.</strong> We may share data
+        with carefully vetted third-party service providers who help us operate the Platform, under strict
+        data processing agreements:
+      </p>
+      <ul>
+        <li><strong style="color:var(--text)">Payment processors</strong> — For billing and subscription management (e.g. Stripe). They process payments under their own privacy policies.</li>
+        <li><strong style="color:var(--text)">Cloud infrastructure</strong> — For hosting, data storage, and content delivery. All providers are contractually bound to protect your data.</li>
+        <li><strong style="color:var(--text)">Analytics providers</strong> — Anonymised, aggregated usage data to help us understand platform performance.</li>
+        <li><strong style="color:var(--text)">Email service providers</strong> — For sending transactional and (where consented) marketing emails.</li>
+        <li><strong style="color:var(--text)">Customer support tools</strong> — To manage support tickets and help requests.</li>
+      </ul>
+      <p>
+        We may also disclose your data if required by law, court order, or to protect the rights, property,
+        or safety of CodeLearn, our users, or the public.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 05 -->
+    <section class="section" id="cookies">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2>Cookies &amp; Tracking</h2>
+      </div>
+      <p>
+        We use cookies and similar technologies to keep you logged in, remember your preferences, and
+        understand how the Platform is used. Here's what we use and why:
+      </p>
+      <div class="cookie-type">
+        <div class="cookie-dot essential"></div>
+        <div>
+          <div class="cookie-type-name">Essential Cookies</div>
+          <div class="cookie-type-desc">Required for the Platform to function — authentication sessions, security tokens, and load balancing. These cannot be disabled.</div>
+        </div>
+      </div>
+      <div class="cookie-type">
+        <div class="cookie-dot analytics"></div>
+        <div>
+          <div class="cookie-type-name">Analytics Cookies</div>
+          <div class="cookie-type-desc">Help us understand how users navigate the Platform. Data is aggregated and anonymised. You can opt out in your account settings.</div>
+        </div>
+      </div>
+      <div class="cookie-type">
+        <div class="cookie-dot functional"></div>
+        <div>
+          <div class="cookie-type-name">Functional Cookies</div>
+          <div class="cookie-type-desc">Remember your preferences such as language, theme, and last visited course so you pick up right where you left off.</div>
+        </div>
+      </div>
+      <div class="cookie-type">
+        <div class="cookie-dot marketing"></div>
+        <div>
+          <div class="cookie-type-name">Marketing Cookies</div>
+          <div class="cookie-type-desc">Only set with your explicit consent. Used to show relevant promotions. You can withdraw consent at any time via cookie settings.</div>
+        </div>
+      </div>
+      <p style="margin-top:1rem">
+        You can manage cookie preferences at any time through your browser settings or via our
+        <code>Cookie Preferences</code> panel in your account.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 06 -->
+    <section class="section" id="retention">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2>Data Retention</h2>
+      </div>
+      <p>
+        We retain your personal data only for as long as necessary to fulfil the purposes described in
+        this policy, or as required by law:
+      </p>
+      <ul>
+        <li><strong style="color:var(--text)">Active accounts</strong> — Data is retained for the duration of your account.</li>
+        <li><strong style="color:var(--text)">After account deletion</strong> — Most personal data is deleted within <strong style="color:var(--cyan);">30 days</strong>. Some anonymised data (e.g. aggregated usage statistics) may be retained indefinitely.</li>
+        <li><strong style="color:var(--text)">Financial records</strong> — Retained for up to <strong style="color:var(--cyan);">7 years</strong> as required by tax and financial regulations.</li>
+        <li><strong style="color:var(--text)">Legal hold</strong> — Data subject to active legal proceedings may be retained beyond standard periods.</li>
+        <li><strong style="color:var(--text)">Backups</strong> — Encrypted backups may retain data for up to <strong style="color:var(--cyan);">90 days</strong> after deletion before being purged.</li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 07 -->
+    <section class="section" id="security">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2>Security</h2>
+      </div>
+      <p>
+        We take the security of your data seriously and implement industry-standard technical and
+        organisational measures, including:
+      </p>
+      <ul>
+        <li>All data transmitted between your browser and our servers is encrypted using <code>TLS 1.3</code>.</li>
+        <li>Passwords are hashed using <code>bcrypt</code> with a strong salt — we never store plaintext passwords.</li>
+        <li>Databases are encrypted at rest using <code>AES-256</code>.</li>
+        <li>Access to personal data is restricted to authorised personnel on a need-to-know basis.</li>
+        <li>Regular security audits and penetration testing are conducted.</li>
+        <li>We operate a responsible disclosure programme — report vulnerabilities to <code>security@codelearn.io</code>.</li>
+      </ul>
+      <p>
+        While we work hard to protect your data, no system is 100% secure. In the event of a data breach
+        that affects your rights, we will notify you and the relevant authorities within 72 hours as required by law.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 08 -->
+    <section class="section" id="your-rights">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <h2>Your Rights</h2>
+      </div>
+      <p>
+        Depending on your location, you have several rights regarding your personal data.
+        You can exercise any of these by contacting us at <code>privacy@codelearn.io</code>:
+      </p>
+      <div class="rights-grid">
+        <div class="right-card">
+          <div class="right-card-icon">👁</div>
+          <div class="right-card-title">Right to Access</div>
+          <div class="right-card-text">Request a copy of all personal data we hold about you.</div>
+        </div>
+        <div class="right-card">
+          <div class="right-card-icon">✏️</div>
+          <div class="right-card-title">Right to Rectify</div>
+          <div class="right-card-text">Correct any inaccurate or incomplete data we hold.</div>
+        </div>
+        <div class="right-card">
+          <div class="right-card-icon">🗑️</div>
+          <div class="right-card-title">Right to Erasure</div>
+          <div class="right-card-text">Request deletion of your personal data ("right to be forgotten").</div>
+        </div>
+        <div class="right-card">
+          <div class="right-card-icon">⏸️</div>
+          <div class="right-card-title">Right to Restrict</div>
+          <div class="right-card-text">Ask us to limit how we process your data in certain circumstances.</div>
+        </div>
+        <div class="right-card">
+          <div class="right-card-icon">📦</div>
+          <div class="right-card-title">Data Portability</div>
+          <div class="right-card-text">Receive your data in a structured, machine-readable format.</div>
+        </div>
+        <div class="right-card">
+          <div class="right-card-icon">🚫</div>
+          <div class="right-card-title">Right to Object</div>
+          <div class="right-card-text">Object to processing based on legitimate interests or for direct marketing.</div>
+        </div>
+      </div>
+      <p>We will respond to all requests within <strong style="color:var(--cyan);">30 days</strong>. There is no fee to exercise your rights.</p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 09 -->
+    <section class="section" id="minors">
+      <div class="section-header">
+        <span class="section-num">09</span>
+        <h2>Children's Privacy</h2>
+      </div>
+      <p>
+        CodeLearn is committed to protecting the privacy of younger learners. Our Platform is available
+        to users aged 13 and over. For users between the ages of 13 and 17, we require verifiable
+        parental or guardian consent before account creation.
+      </p>
+      <ul>
+        <li>We collect only the minimum data necessary for users under 18.</li>
+        <li>We do not use data from users under 18 for marketing or advertising purposes.</li>
+        <li>We do not allow users under 18 to make their profiles publicly visible by default.</li>
+        <li>Parents or guardians may request access to, correction of, or deletion of their child's data at any time by contacting <code>privacy@codelearn.io</code>.</li>
+        <li>If we become aware that we have inadvertently collected data from a child under 13 without consent, we will delete it promptly.</li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 10 -->
+    <section class="section" id="international">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <h2>International Users</h2>
+      </div>
+      <p>
+        CodeLearn is based in Uganda and our servers may be located in various regions worldwide. If you
+        access our Platform from outside Uganda, your data may be transferred to and processed in countries
+        with different data protection laws.
+      </p>
+      <p>
+        Where we transfer data internationally, we ensure appropriate safeguards are in place — such as
+        Standard Contractual Clauses (SCCs), adequacy decisions, or other legally recognised transfer
+        mechanisms — to ensure your data receives equivalent protection regardless of where it is processed.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 11 -->
+    <section class="section" id="changes">
+      <div class="section-header">
+        <span class="section-num">11</span>
+        <h2>Policy Changes</h2>
+      </div>
+      <p>
+        We may update this Privacy Policy from time to time to reflect changes in our practices, technology,
+        legal requirements, or other factors. When we make material changes, we will:
+      </p>
+      <ul>
+        <li>Update the "Last Updated" date at the top of this page.</li>
+        <li>Notify you by email at least <strong style="color:var(--cyan);">14 days</strong> before changes take effect.</li>
+        <li>Display a prominent notice on the Platform.</li>
+      </ul>
+      <p>
+        We encourage you to review this policy periodically. Your continued use of CodeLearn after changes
+        take effect constitutes your acceptance of the revised policy.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 12 -->
+    <section class="section" id="contact">
+      <div class="section-header">
+        <span class="section-num">12</span>
+        <h2>Contact &amp; Data Controller</h2>
+      </div>
+      <p>
+        If you have any questions, concerns, or requests about this Privacy Policy or how we handle your
+        personal data, please reach out to our dedicated privacy team. We aim to respond within 2 business days.
+      </p>
+      <div class="contact-card">
+        <div class="contact-card-left">
+          <h3>Questions about your data?</h3>
+          <p>Our privacy team is ready to help you exercise your rights.</p>
+        </div>
+        <a href="mailto:privacy@codelearn.io" class="contact-btn">
+          🔒 privacy@codelearn.io
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Code<span>Learn</span></div>
+  <nav class="footer-links">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms-and-conditions.html">Terms</a>
+    <a href="home.html">Home</a>
+    <a href="mailto:support@codelearn.io">Support</a>
+  </nav>
+  <div class="footer-copy">© 2025 CodeLearn. All rights reserved.</div>
+</footer>
+
+<script>
+  // Particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      width: ${Math.random() > .5 ? 2 : 3}px;
+      height: ${Math.random() > .5 ? 2 : 3}px;
+      animation-duration: ${7 + Math.random() * 10}s;
+      animation-delay: ${Math.random() * 10}s;
+    `;
+    container.appendChild(p);
+  }
+
+  // Active TOC on scroll
+  const sections = document.querySelectorAll('.section');
+  const tocLinks = document.querySelectorAll('.toc-list a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`.toc-list a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
